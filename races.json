@@ -1,0 +1,22 @@
+{
+    "Aarakocra": {
+        "abilityScoreBonuses": {"Dexterity": 2, "Wisdom": 1},
+        "creatureType": "Humanoid",
+        "size": "Medium",
+        "speed": {"walk": 25, "fly": 50},
+        "features": [
+            "Flight",
+            "Talons"
+        ]     
+    },
+    "Elf": {
+        "abilityScoreBonuses": {"Dexterity": 2, "Wisdom": 1},
+        "creatureType": "Humanoid",
+        "size": "Medium",
+        "speed": {"walk": 25, "fly": 50},
+        "features": [
+            "Flight",
+            "Talons"
+        ]     
+    }
+}

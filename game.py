@@ -10,14 +10,15 @@ pygame.init()
 gameScreen = pygame.display.set_mode((screenWidth, screenHeight))
 clock = pygame.time.Clock()
 
+playerStartPoint = pygame.Vector2(1, 1)
+
 testCharacter = runCharacterCreator(gameScreen)
+
 print("Created: " + str(testCharacter))
 
 gameActive = True
 grid = Grid()
-playerStartPoint = pygame.Vector2(1, 1)
-redPlayer = Character(*playerStartPoint, grid.cellSize, "Red", Barbarian())
-print("Created: " + str(redPlayer))
+testCharacter.setPosition(1,1,grid.cellSize)
 
 def handle_events():
     global gameActive
@@ -28,7 +29,7 @@ def handle_events():
 def draw():
     gameScreen.fill(getColorFromPallette("black"))
     grid.draw(gameScreen, getColorFromPallette("gray"))
-    redPlayer.draw(gameScreen)
+    testCharacter.draw(gameScreen)
     pygame.display.flip()
 
 while gameActive:
