@@ -5,7 +5,6 @@ from typing import Optional, Dict, Literal
 from characterClass import CharacterClass
 from race import Race
 
-abilityScoreNames = Literal["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"]
 
 class Character(Entity):
     def __init__(
@@ -15,14 +14,14 @@ class Character(Entity):
             name: str, 
             characterClass: CharacterClass, 
             race: Race, 
-            baseAbilityScores: Dict[abilityScoreNames, int], 
+            abilityScores: dict[str,int], 
         ): #experience: int, #stats: Stats, inventory: Inventory, 
 
         super().__init__(x, y, cellSize, color=getColorFromPallette("red"))
         self.name = name
         self.characterClass = characterClass
         self.race = race
-        self.abilityScores = self.race.applyAbilityBonuses(baseAbilityScores)
+        self.abilityScores = abilityScores
          #self.experience = experience
         #self.stats = stats
         #self.inventory = inventory

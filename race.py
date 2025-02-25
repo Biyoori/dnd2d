@@ -22,4 +22,4 @@ class Race:
         return newStats
 
     def __str__(self):
-        return f"{self.name} ({self.creature_type}, {self.size}) - Speed: {self.speed}, Traits: {', '.join(self.traits)}"
+        return f"{self.name} ({self.creatureType}, {self.size}) - Speed: {self.speed}, Traits: {', '.join(self.features)}"

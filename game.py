@@ -1,8 +1,6 @@
 from settings import *
 from core.grid import Grid
-from characters.character import Character
 from ui.characterCreator import runCharacterCreator
-from characters.classes import Barbarian
 
 pygame.init()
 
@@ -13,6 +11,7 @@ clock = pygame.time.Clock()
 playerStartPoint = pygame.Vector2(1, 1)
 
 testCharacter = runCharacterCreator(gameScreen)
+print(testCharacter.abilityScores)
 
 print("Created: " + str(testCharacter))
 
