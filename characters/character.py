@@ -1,7 +1,6 @@
-import pygame
 from settings import getColorFromPallette
 from core.entity import Entity
-from typing import Optional, Dict, Literal
+from typing import Optional
 from characterClass import CharacterClass
 from race import Race
 

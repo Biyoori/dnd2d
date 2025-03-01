@@ -1,22 +1,19 @@
 from settings import *
 from core.grid import Grid
-from ui.characterCreator import runCharacterCreator
+from ui.characterCreatorLoop import runCharacterCreator
 
 pygame.init()
 
-#Inicjalizacja
 gameScreen = pygame.display.set_mode((screenWidth, screenHeight))
 clock = pygame.time.Clock()
 
-playerStartPoint = pygame.Vector2(1, 1)
-
 testCharacter = runCharacterCreator(gameScreen)
 print(testCharacter.abilityScores)
-
 print("Created: " + str(testCharacter))
 
 gameActive = True
 grid = Grid()
+
 testCharacter.setPosition(1,1,grid.cellSize)
 
 def handle_events():
@@ -24,7 +21,7 @@ def handle_events():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             gameActive = False
-
+            
 def draw():
     gameScreen.fill(getColorFromPallette("black"))
     grid.draw(gameScreen, getColorFromPallette("gray"))

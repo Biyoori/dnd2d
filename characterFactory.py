@@ -1,4 +1,3 @@
-import json
 from characters.character import Character
 from characterClass import CharacterClass
 from race import Race
