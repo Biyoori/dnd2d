@@ -1,10 +1,10 @@
 import pygame
 from enum import Enum 
-from settings import screenHeight, screenWidth, getColorFromPallette
-from characterFactory import CharacterFactory
+from core.settings import screenHeight, screenWidth, getColorFromPallette
+from characters.characterFactory import CharacterFactory
 from characters.classes import Barbarian, Fighter
-from race import Race
-from utils import loadJson
+from characters.race import Race
+from core.utils import loadJson
 
 pygame.font.init()
 font = pygame.font.Font(None, 40)
@@ -18,7 +18,7 @@ CHARACTER_CLASSES = list(OptionsOfCharacterClasses)
 
 class CharacterCreator:
     def __init__(self, screen):                
-        self.RACES_DATA = loadJson("races.json")
+        self.RACES_DATA = loadJson("characters/races.json")
         self.RACES = list(self.RACES_DATA.keys())
         self.ABILITY_SCORE_NAMES = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"]
         self.screen = screen
@@ -30,6 +30,10 @@ class CharacterCreator:
         self.abilityScores = {name: 8 for name in reversed(self.ABILITY_SCORE_NAMES)}
         self.selectedAbility=0
         self.abilityScorePoints=27
+        self.skillProficiencyOptions = []
+        self.skillProficienciesSelected = {}
+        self.selectedSkill = 0
+        self.skillPoints = 0
         self.status = 1
         
 
@@ -53,19 +57,23 @@ class CharacterCreator:
     def setSelectedAbility(self, value: int):
         self.abilityScores[self.ABILITY_SCORE_NAMES[self.selectedAbility]] = max(8, min(value, 15))
 
+    def createSkillProficiencyDict(self):
+        return {skill: False for skill in self.getSelectedClass().value.startingSkillProficiencyOptions}
+    
+    def getSelectedSkillName(self):
+        return self.skillProficiencyOptions[self.selectedSkill]
+    
+    def setSelectedSkill(self):
+        self.skillProficienciesSelected[self.getSelectedSkillName()] = not self.skillProficienciesSelected[self.getSelectedSkillName()]
+
+    def getSelectedSkill(self):
+        return self.skillProficienciesSelected[self.getSelectedSkillName()]
+
     def drawNameStep(self):
         self.drawText("Enter characters name", center.x, center.y-40)
         pygame.draw.rect(self.screen, getColorFromPallette("light-gray"), (center.x-120,center.y-20,240,40), 2)
         pygame.draw.rect(self.screen, getColorFromPallette("black"), (center.x-110,center.y-15, 220, 30))
         self.drawText(f"{self.characterName}", *center)
-
-    def nameStep(self, event: pygame.event):
-        if event.key == pygame.K_RETURN:
-            self.creationStep = "Class Step"
-        elif event.key == pygame.K_BACKSPACE:
-            self.characterName = self.characterName[:-1]
-        elif len(self.characterName) < 12:
-            self.characterName += event.unicode
 
     def drawClassStep(self):
         self.drawText("Pick a class", center.x, center.y-40)
@@ -77,7 +85,7 @@ class CharacterCreator:
 
     def drawAbilityStep(self):
         bonuses = self.selectedRace.abilityScoreBonuses.copy()
-        self.drawText("Select ability scores:", center.x, center.y-40)
+        self.drawText(f"Select ability scores: {self.abilityScorePoints}", center.x, center.y-40)
         drawHeight = -180
         xOffset = 114
         for name, score in self.abilityScores.items():
@@ -90,6 +98,18 @@ class CharacterCreator:
                 bonuses.pop(name)
             drawHeight+= 35
 
+    def drawSkillStep(self):
+        drawHeight = -5
+        self.drawText(f"Choose skill proficiencies: {self.skillPoints}", center.x, center.y-40)
+        for skill, selected in self.skillProficienciesSelected.items():
+            if skill == self.getSelectedSkillName():
+                self.drawText(f"< {skill} >", center.x-160, center.y-drawHeight, alignLeft=1)
+            else:
+                self.drawText(f"{skill}", center.x-160, center.y-drawHeight, alignLeft=1)
+            if selected:
+                self.drawText("x", center.x+160, center.y-drawHeight)
+            drawHeight-= 35
+
     def drawCreationSteps(self):
         match self.creationStep:
             case "Name Step":
@@ -100,12 +120,14 @@ class CharacterCreator:
                 self.drawRaceStep()
             case "Ability Step":
                 self.drawAbilityStep()
+            case "Skill Step":
+                self.drawSkillStep()
 
     def eventHandler(self):
 
-        def handleNameStepKeyDown(event: pygame.event):              
-            if len(self.characterName) < 12:
-                self.characterName += event.unicode          
+        def handleNameStepKeyDown(event: pygame.event):          
+            if len(self.characterName) < 12 and event.key != 8:
+                self.characterName += event.unicode        
 
         def handleNameStepBackspace(event):
             self.characterName = self.characterName[:-1]
@@ -120,6 +142,9 @@ class CharacterCreator:
             self.selectedClassIndex = (self.selectedClassIndex - 1) % len(CHARACTER_CLASSES)
 
         def handleClassStepReturn(event):
+            self.skillProficienciesSelected = self.createSkillProficiencyDict()
+            self.skillProficiencyOptions = self.getSelectedClass().value.startingSkillProficiencyOptions
+            self.skillPoints = self.getSelectedClass().value.startingSkillProficiencies
             self.creationStep = "Race Step"
 
         def handleRaceStepKeyRight(event):
@@ -151,8 +176,27 @@ class CharacterCreator:
                 self.setSelectedAbility(self.getSelectedAbility()-1)
 
         def handleAbilityStepReturn(event):
-            self.abilityScores = self.selectedRace.applyAbilityBonuses(self.abilityScores)
-            self.status = 0
+            if self.abilityScorePoints <= 0:
+                self.abilityScores = self.selectedRace.applyAbilityBonuses(self.abilityScores)
+                self.creationStep = "Skill Step"         
+
+        def handleSkillStepDown(event):
+            self.selectedSkill = (self.selectedSkill + 1) % len(self.skillProficiencyOptions)
+
+        def handleSkillStepUp(event):
+            self.selectedSkill = (self.selectedSkill - 1) % len(self.skillProficiencyOptions)
+
+        def handleSkillStepRight(event):
+            if self.skillPoints > 0 and not self.getSelectedSkill():
+                self.setSelectedSkill()
+                self.skillPoints -= 1
+            elif self.skillPoints <= self.getSelectedClass().value.startingSkillProficiencies and self.getSelectedSkill():
+                self.setSelectedSkill()
+                self.skillPoints += 1
+
+        def handleSkillStepReturn(event):
+            if self.skillPoints <= 0:
+                self.status = 0
 
         stepEventHandlers = {
             "Name Step": {
@@ -177,6 +221,12 @@ class CharacterCreator:
                 pygame.K_LEFT: handleAbilityStepKeyLeft,
                 pygame.K_RETURN: handleAbilityStepReturn
             },
+            "Skill Step": {
+                pygame.K_DOWN: handleSkillStepDown,
+                pygame.K_UP: handleSkillStepUp,
+                pygame.K_RIGHT: handleSkillStepRight,
+                pygame.K_RETURN: handleSkillStepReturn
+            }
         }
 
         for event in pygame.event.get():
@@ -199,4 +249,6 @@ class CharacterCreator:
                     handler(event)
             
     def createCharacter(self):
-        return CharacterFactory.createCharacter(self.characterName, self.getSelectedClass().value, self.selectedRace, self.abilityScores)
+        classes = [self.getSelectedClass().value]
+        skillProficienciesSelected = [skill for skill, selected in self.skillProficienciesSelected.items() if selected is True]
+        return CharacterFactory.createCharacter(self.characterName, classes, self.selectedRace, self.abilityScores, skillProficienciesSelected)

@@ -1,4 +1,4 @@
-from settings import *
+from core.settings import *
 from core.grid import Grid
 from ui.characterCreatorLoop import runCharacterCreator
 
@@ -8,8 +8,8 @@ gameScreen = pygame.display.set_mode((screenWidth, screenHeight))
 clock = pygame.time.Clock()
 
 testCharacter = runCharacterCreator(gameScreen)
-print(testCharacter.abilityScores)
-print("Created: " + str(testCharacter))
+print(f"Created: ")
+testCharacter.displayCharacterInfo()
 
 gameActive = True
 grid = Grid()
@@ -21,7 +21,7 @@ def handle_events():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             gameActive = False
-            
+
 def draw():
     gameScreen.fill(getColorFromPallette("black"))
     grid.draw(gameScreen, getColorFromPallette("gray"))
@@ -34,5 +34,6 @@ while gameActive:
     clock.tick(framerate)
 
 pygame.quit()
+
 
 
