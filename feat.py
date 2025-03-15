@@ -1,5 +1,5 @@
 class Feat():
-    def __init__(self, name, description, effects):
+    def __init__(self, name: str, description: str, effects: list[str]):
         self.name = name
         self.description = description
         self.effects = effects

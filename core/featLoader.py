@@ -10,7 +10,7 @@ for filename in os.listdir(FEAT_FOLDER):
         featName = filename[:-3]
         FEAT_REGISTRY[featName.capitalize()] = f"{FEAT_FOLDER}.{featName}"
 
-def getFeat(featName):
+def getFeat(featName: str):
     if featName in FEAT_REGISTRY:
         moduleName = FEAT_REGISTRY[featName]
         module = importlib.import_module(moduleName)

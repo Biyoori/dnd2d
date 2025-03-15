@@ -10,6 +10,7 @@ clock = pygame.time.Clock()
 testCharacter = runCharacterCreator(gameScreen)
 print(f"Created: ")
 testCharacter.displayCharacterInfo()
+print(testCharacter.race)
 
 gameActive = True
 grid = Grid()
