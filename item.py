@@ -1,4 +1,4 @@
-class Item():
+class Item:
     def __init__(self, name: str, description: str, weight: float, value: int, consumable: bool = False):
         self.name = name
         self.description = description

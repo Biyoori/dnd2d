@@ -17,6 +17,23 @@ class StatsManager:
     def getAbilityMod(self, ability: str):
         return (self.abilityScores[ability] - 10) // 2 
     
+    def getAttackBonus(self, weapon):
+        attribute = "Strength" if weapon.weaponType == "melee" else "Dexterity"
+        if weapon.finesse:
+            attribute = "Dexterity" if self.getAbilityMod("Dexterity") > self.getAbilityMod("Strength") else "Strength"
+
+        attackBonus = self.getAbilityMod(attribute)
+        if weapon.name in self.skillProficiencies:
+            attackBonus += self.proficiencyBonus
+        return attackBonus
+    
+    def getDamageBonus(self, weapon):
+        attribute = "Strength" if weapon.weaponType == "melee" else "Dexterity"
+        if weapon.finesse:
+            attribute = "Dexterity" if self.getAbilityMod("Dexterity") > self.getAbilityMod("Strength") else "Strength"
+
+        return self.getAbilityMod(attribute)
+
     def rollSkillCheck(self, skill: str):
         if skill not in self.SKILLS:
             raise ValueError(f"Unknown Skill: {skill}")

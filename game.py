@@ -1,6 +1,7 @@
 from core.settings import *
 from core.grid import Grid
 from ui.characterCreatorLoop import runCharacterCreator
+from combat import Combat
 
 pygame.init()
 
@@ -15,17 +16,19 @@ print(testCharacter.race)
 gameActive = True
 grid = Grid()
 
-testCharacter.setPosition(1,1,grid.cellSize)
+testCharacter.initialize(1, 1, grid)
 
 def handle_events():
     global gameActive
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             gameActive = False
+        
+        testCharacter.handleEvent(event)
 
 def draw():
     gameScreen.fill(getColorFromPallette("black"))
-    grid.draw(gameScreen, getColorFromPallette("gray"))
+    grid.draw(gameScreen)
     testCharacter.draw(gameScreen)
     pygame.display.flip()
 

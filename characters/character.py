@@ -19,9 +19,8 @@ class Character(Entity):
             race: Race, 
             abilityScores: dict[str,int],
             skillProficiencies: list[str]
-        ):
-        super().__init__(x, y, cellSize, color=getColorFromPallette("red"))
-
+        ): 
+        super().__init__(getColorFromPallette("red"), race.walkingSpeed)
         self.name = name
         self.race = race
         self.abilityScores = abilityScores
