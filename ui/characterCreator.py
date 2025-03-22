@@ -1,10 +1,10 @@
 import pygame
 from enum import Enum 
-from core.settings import screenHeight, screenWidth, getColorFromPallette
+from settings import screenHeight, screenWidth, getColorFromPallette
 from characters.characterFactory import CharacterFactory
 from characters.classes import Barbarian, Fighter
-from characters.race import Race
-from core.utils import loadJson
+from characters.races.race import Race
+from utils.utils import loadJson
 
 pygame.font.init()
 font = pygame.font.Font(None, 40)
@@ -18,7 +18,7 @@ CHARACTER_CLASSES = list(OptionsOfCharacterClasses)
 
 class CharacterCreator:
     def __init__(self, screen):                
-        self.RACES_DATA = loadJson("characters/races.json")
+        self.RACES_DATA = loadJson("characters/races/races.json")
         self.RACES = list(self.RACES_DATA.keys())
         self.ABILITY_SCORE_NAMES = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"]
         self.screen = screen

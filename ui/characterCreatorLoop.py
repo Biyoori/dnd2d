@@ -1,7 +1,7 @@
 import pygame
 from ui.characterCreator import CharacterCreator
 
-def runCharacterCreator(screen: pygame.surface):
+def runCharacterCreator(screen: pygame.Surface):
     creatorActive = True
 
     ch = CharacterCreator(screen)

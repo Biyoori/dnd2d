@@ -1,12 +1,12 @@
-from core.settings import getColorFromPallette
-from core.entity import Entity
+from settings import getColorFromPallette
+from entities.entity import Entity
 from typing import Optional
 from characters.classes.characterClass import CharacterClass
-from characters.race import Race
+from characters.races.race import Race
 from core.statsManager import StatsManager
 from core.featLoader import getFeat
-from inventory import Inventory
-from item import Item
+from inventory.inventory import Inventory
+from items.item import Item
 
 class Character(Entity):
     def __init__(

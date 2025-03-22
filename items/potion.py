@@ -1,4 +1,4 @@
-from item import Item
+from items.item import Item
 
 class Potion(Item):
     def __init__(self, name: str, description: str, weight: float, value: int, effect: str, potency: int):

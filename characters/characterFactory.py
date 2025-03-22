@@ -1,6 +1,6 @@
 from characters.character import Character
 from characters.classes.characterClass import CharacterClass
-from characters.race import Race
+from characters.races.race import Race
 
 class CharacterFactory:
     @staticmethod
