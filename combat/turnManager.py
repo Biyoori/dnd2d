@@ -1,3 +1,5 @@
+from entities.enemy import Enemy
+
 class TurnManager:
     def __init__(self, movementManager):
         self.inCombat = False
@@ -8,7 +10,7 @@ class TurnManager:
         self.combat = combat
         self.inCombat = True
         combat.displayInitiativeOrder()
-        self.currentTurnEntity = combat.nextTurn()
+        combat.nextTurn()
 
     def endCombat(self):
         self.inCombat = False
@@ -19,11 +21,18 @@ class TurnManager:
     def startTurn(self, entity):
         self.currentTurnEntity = entity
         self.movementManager.resetMovement(entity)
-        print(entity.name)
+        print(f"Starting turn for {entity.name}. Current turn entity: {self.currentTurnEntity.name}")
+
+        if isinstance(self.currentTurnEntity, Enemy):
+            print(f"{entity.name} is an enemy, ending turn after AI update.")
+            entity.ai.update(self.combat.getPlayer())
+            self.endTurn()     
+        else:
+            print(entity.name)
 
     def nextTurn(self):
         if self.inCombat:
-            self.currentTurnEntity = self.combat.nextTurn()
+            self.combat.nextTurn()
 
     def endTurn(self):
         print(f"{self.currentTurnEntity.name} finished their turn!")

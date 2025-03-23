@@ -6,10 +6,10 @@ from typing import Dict, List, Optional
 class StatsManager:
 
     SKILLS = {
-        "Acrobatics": "Dexterity",
+        "Acrobatics": "DEX",
     }
 
-    SAVING_THROWS = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"]
+    SAVING_THROWS = ["STR", "DEX", "CON", "INT", "WIS", "CHA"]
 
     def __init__(
         self, 
@@ -34,9 +34,9 @@ class StatsManager:
         if self.fixedAttackBonus is not None:
             return self.fixedAttackBonus
         
-        attribute = "Strength" if weapon.weaponType == "melee" else "Dexterity"
+        attribute = "STR" if weapon.weaponType == "melee" else "DEX"
         if weapon.finesse:
-            attribute = "Dexterity" if self.getAbilityMod("Dexterity") > self.getAbilityMod("Strength") else "Strength"
+            attribute = "DEX" if self.getAbilityMod("DEX") > self.getAbilityMod("STR") else "STR"
 
         attackBonus = self.getAbilityMod(attribute)
         if weapon.name in self.skillProficiencies:
@@ -47,9 +47,9 @@ class StatsManager:
         if self.fixedDamageBonus is not None:
             return self.fixedDamageBonus
         
-        attribute = "Strength" if weapon.weaponType == "melee" else "Dexterity"
+        attribute = "STR" if weapon.weaponType == "melee" else "DEX"
         if weapon.finesse:
-            attribute = "Dexterity" if self.getAbilityMod("Dexterity") > self.getAbilityMod("Strength") else "Strength"
+            attribute = "DEX" if self.getAbilityMod("DEX") > self.getAbilityMod("STR") else "STR"
 
         return self.getAbilityMod(attribute)
 

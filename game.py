@@ -5,6 +5,7 @@ from combat.combat import Combat
 from combat.turnManager import TurnManager
 from movement.movementManager import MovementManager
 from factories.enemyFactory import EnemyFactory
+from ai.skeletonAi import SkeletonAi
 
 pygame.init()
 
@@ -15,8 +16,10 @@ enemyFactory = EnemyFactory("data/enemies")
 movementManager = MovementManager()
 turnManager = TurnManager(movementManager)
 
+grid = Grid()
+
 testCharacter = runCharacterCreator(gameScreen)
-skeleton = enemyFactory.createEnemy("skeleton")
+skeleton = enemyFactory.createEnemy(grid, "skeleton")
 
 #testcombat = runCharacterCreator(gameScreen)
 print(f"Created: ")
@@ -24,17 +27,15 @@ testCharacter.displayCharacterInfo()
 print(testCharacter.race)
 
 gameActive = True
-grid = Grid()
 
-skeleton.initialize(5,5,grid,movementManager)
+
+skeleton.initialize(4,4,grid,movementManager)
 testCharacter.initialize(1, 1, grid, movementManager)
 #testcombat.initialize(5, 5, grid, turnManager, movementManager)
 
 
-combat = Combat([testCharacter], [], turnManager)
+combat = Combat([testCharacter], [skeleton], turnManager)
 turnManager.startCombat(combat)
-
-skeleton.executeAction("Shortsword", testCharacter)
 
 def handle_events():
     global gameActive

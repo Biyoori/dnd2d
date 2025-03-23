@@ -22,6 +22,6 @@ class EnemyFactory:
             self.enemyCache[enemyType] = data
             return data
         
-    def createEnemy(self, enemyType: str) -> "Enemy":
+    def createEnemy(self, grid, enemyType: str) -> "Enemy":
         data = self.loadEnemyData(enemyType)
-        return Enemy(**data)
+        return Enemy(grid, **data)

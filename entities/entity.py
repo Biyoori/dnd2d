@@ -46,7 +46,7 @@ class Entity:
         self.renderer = EntityRenderer(self, grid)
         
     def setPosition(self, grid: "Grid") -> None: # type: ignore
-        self.position = pygame.Vector2(
+        self._position = pygame.Vector2(
             self._gridX * grid.cellSize + grid.cellSize / 4, 
             self._gridY * grid.cellSize + grid.cellSize / 4
         )

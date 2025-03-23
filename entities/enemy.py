@@ -2,12 +2,15 @@ import importlib
 from settings import getColorFromPallette
 from entities.entity import Entity
 from core.statsManager import StatsManager
+from ai.skeletonAi import SkeletonAi
 
 
 class Enemy(Entity):
-    def __init__(self, **kwargs):
+    def __init__(self, grid, **kwargs):
         print(kwargs.get("speed"))
         super().__init__(getColorFromPallette("blue"), kwargs.get("speed"))
+
+        self.grid = grid
 
         self.name = kwargs.get("name", "Unknown")
         self.type = kwargs.get("type", "Unknown")
@@ -30,6 +33,7 @@ class Enemy(Entity):
         self.habitat = kwargs.get("habitat", [])
         
         self.stats = StatsManager(kwargs.get("ability_scores", {}))
+        self.ai = SkeletonAi(self, self.grid)
 
     def calculateHitPoints(self) -> int:
         if "fixed" in self.hitPointsData:

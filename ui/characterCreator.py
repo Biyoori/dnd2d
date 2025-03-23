@@ -20,7 +20,7 @@ class CharacterCreator:
     def __init__(self, screen):                
         self.RACES_DATA = loadJson("characters/races/races.json")
         self.RACES = list(self.RACES_DATA.keys())
-        self.ABILITY_SCORE_NAMES = ["Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"]
+        self.ABILITY_SCORE_NAMES = ["STR", "DEX", "CON", "INT", "WIS", "CHA"]
         self.screen = screen
         self.creationStep = "Name Step"
         self.characterName = ""

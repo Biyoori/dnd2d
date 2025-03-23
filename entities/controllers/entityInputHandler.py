@@ -42,6 +42,7 @@ class EntityInputHandler:
         if self.dragging:
             self.dragging = False
             self.movementController.finalizeMovement(turnManager)
+            print(f"Dragging ended for {self.entity.name}. Dragging state: {self.dragging}")
 
     def isMouseOverEntity(self, mouseX: int, mouseY: int) -> bool:
         return (self.entity.position.x <= mouseX <= self.entity.position.x + self.entity.size and

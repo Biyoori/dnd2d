@@ -3,6 +3,7 @@ from collections import deque
 
 class Combat:
     def __init__(self, characters, enemies, turnManager):
+        self.characters = characters
         self.combatants = characters + enemies
         self.turnQueue = deque(self.combatants)
         self.turnManager = turnManager
@@ -17,7 +18,7 @@ class Combat:
 
         for combatant in self.combatants:
             roll = self.rollDice(20)
-            dexMod = combatant.stats.getAbilityMod("Dexterity")
+            dexMod = combatant.stats.getAbilityMod("DEX")
             initiative = roll + dexMod
             self.initiativeOrder[combatant] = initiative
 
@@ -38,9 +39,8 @@ class Combat:
             current = self.turnQueue.popleft()
             self.turnQueue.append(current)
             self.turnManager.currentTurnEntity = current
+            print(f"Now's {current.name}'s turn. Queue: {[entity.name for entity in self.turnQueue]}")
             self.turnManager.startTurn(current)
-            print(f"Now's {current.name}s turn")
-            return current
-
-    def attack(self, attacker, defender):
-        pass
+        
+    def getPlayer(self):
+        return self.characters[0] if self.characters else None

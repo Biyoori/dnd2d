@@ -52,7 +52,7 @@ class Character(Entity):
 
 
     def calculateHP(self) -> int:
-        return sum(cls.hitDie + self.stats.getAbilityMod("Constitution") for cls in self.characterClasses)
+        return sum(cls.hitDie + self.stats.getAbilityMod("CON") for cls in self.characterClasses)
     
     def getProficiencyBonus(self) -> int:
         level = sum(lvl for lvl in self.characterClasses.values())
