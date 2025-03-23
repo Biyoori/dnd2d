@@ -43,8 +43,8 @@ class Character(Entity):
         )
         
         # Hit Points
-        self.maxHP = self.calculateHP()
-        self.currentHP = self.maxHP
+        self.maxHitPoints = self.calculateHP()
+        self.hitPoints = self.maxHitPoints
 
         # Feats
         self.feats =  self.loadFeats()

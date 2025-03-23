@@ -1,7 +1,7 @@
 import pygame
 from enum import Enum 
 from settings import screenHeight, screenWidth, getColorFromPallette
-from characters.characterFactory import CharacterFactory
+from factories.characterFactory import CharacterFactory
 from characters.classes import Barbarian, Fighter
 from characters.races.race import Race
 from utils.utils import loadJson

@@ -56,5 +56,9 @@ class Entity:
 
     def draw(self, surface: pygame.Surface) -> None:
         self.renderer.draw(surface)
+
+    def takeDamage(self, damage: int, damageType: str) -> None:
+        self.hitPoints -= damage
+        print(f"{self.name} takes {damage} {damageType} damage! Current health: {self.hitPoints}")
     
     
