@@ -1,10 +1,10 @@
 from feat import Feat
 
-def applyFlight(character):
-    character.race.flyingSpeed = max(character.race.flyingSpeed, 50)
+def apply_flight(character) -> None:
+    character.race.flying_speed = max(character.race.flying_speed, 50)
 
 flight = Feat(
     name="Flight",
     description="You have a flying speed of 50 feet. To use this speed, you can't be wearing medium or heavy armor.",
-    effects=[applyFlight]
+    effects=[apply_flight]
 )

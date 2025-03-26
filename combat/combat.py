@@ -1,46 +1,51 @@
+from typing import List, TYPE_CHECKING
 import random
 from collections import deque
 
+if TYPE_CHECKING:
+    from entities.entity import Entity
+    from combat.turn_manager import TurnManager
+
 class Combat:
-    def __init__(self, characters, enemies, turnManager):
+    def __init__(self, characters: List["Entity"], enemies: List["Entity"], turn_manager: "TurnManager") -> None:
         self.characters = characters
         self.combatants = characters + enemies
-        self.turnQueue = deque(self.combatants)
-        self.turnManager = turnManager
+        self.turn_queue = deque(self.combatants)
+        self.turn_manager = turn_manager
 
-        self.rollInitiative()
+        self.roll_initiative()
 
-    def rollDice(self, sides) -> int:
+    def roll_dice(self, sides) -> int:
         return random.randint(1, sides)
 
-    def rollInitiative(self):
-        self.initiativeOrder = {}
+    def roll_initiative(self) -> None:
+        self.initiative_order = {}
 
         for combatant in self.combatants:
-            roll = self.rollDice(20)
-            dexMod = combatant.stats.getAbilityMod("DEX")
-            initiative = roll + dexMod
-            self.initiativeOrder[combatant] = initiative
+            roll = self.roll_dice(20)
+            dex_mod = combatant.stats._abilities.get_mod("DEX")
+            initiative = roll + dex_mod
+            self.initiative_order[combatant] = initiative
 
-        sortedCombatants = sorted(self.initiativeOrder.keys(), key= lambda c: self.initiativeOrder[c], reverse=True)
+        sorted_combatants = sorted(self.initiative_order.keys(), key= lambda c: self.initiative_order[c], reverse=True)
 
-        self.turnQueue = deque(sortedCombatants)
+        self.turn_queue = deque(sorted_combatants)
 
-    def displayInitiativeOrder(self):
+    def display_initiative_order(self) -> None:
         print("\n=== Initiative Order ===")
         for index, (combatant, initiative) in enumerate(
-            sorted(self.initiativeOrder.items(), key=lambda x: x[1], reverse=True)
+            sorted(self.initiative_order.items(), key=lambda x: x[1], reverse=True)
         ):
             print(f"{index + 1}. {combatant.name} - Initiative: {initiative}")
         print("==============\n")
     
-    def nextTurn(self):
-        if self.turnQueue:
-            current = self.turnQueue.popleft()
-            self.turnQueue.append(current)
-            self.turnManager.currentTurnEntity = current
-            print(f"Now's {current.name}'s turn. Queue: {[entity.name for entity in self.turnQueue]}")
-            self.turnManager.startTurn(current)
+    def next_turn(self) -> None:
+        if self.turn_queue:
+            current = self.turn_queue.popleft()
+            self.turn_queue.append(current)
+            self.turn_manager.current_turn_entity = current
+            print(f"Now's {current.name}'s turn. Queue: {[entity.name for entity in self.turn_queue]}")
+            self.turn_manager.start_turn(current)
         
-    def getPlayer(self):
+    def get_player(self) -> "Entity":
         return self.characters[0] if self.characters else None

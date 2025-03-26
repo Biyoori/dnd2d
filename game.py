@@ -1,57 +1,57 @@
 from settings import *
 from core.grid import Grid
-from ui.characterCreatorLoop import runCharacterCreator
 from combat.combat import Combat
-from combat.turnManager import TurnManager
-from movement.movementManager import MovementManager
-from factories.enemyFactory import EnemyFactory
-from ai.skeletonAi import SkeletonAi
+from combat.turn_manager import TurnManager
+from movement.movement_manager import MovementManager
+from factories.enemy_factory import EnemyFactory
+from ai.skeleton_ai import SkeletonAi
+from ui.character_creator.character_creator import CharacterCreator
+from ui.utils.text_renderer import init
 
 pygame.init()
 
-gameScreen = pygame.display.set_mode((screenWidth, screenHeight))
+gameScreen = pygame.display.set_mode((screen_width, screen_height))
 clock = pygame.time.Clock()
 
-enemyFactory = EnemyFactory("data/enemies")
-movementManager = MovementManager()
-turnManager = TurnManager(movementManager)
+init(font_size=40)
+character_creator = CharacterCreator(gameScreen)
+enemy_factory = EnemyFactory("data/enemies")
+movement_manager = MovementManager()
+turn_manager = TurnManager(movement_manager)
 
 grid = Grid()
 
-testCharacter = runCharacterCreator(gameScreen)
-skeleton = enemyFactory.createEnemy(grid, "skeleton")
+testCharacter = character_creator.run()
+skeleton = enemy_factory.create_enemy(grid, "skeleton")
 
-#testcombat = runCharacterCreator(gameScreen)
 print(f"Created: ")
-testCharacter.displayCharacterInfo()
+testCharacter.display_character_info()
 print(testCharacter.race)
 
 gameActive = True
 
 
-skeleton.initialize(4,4,grid,movementManager)
-testCharacter.initialize(1, 1, grid, movementManager)
-#testcombat.initialize(5, 5, grid, turnManager, movementManager)
+skeleton.initialize(4,4,grid,movement_manager)
+testCharacter.initialize(1, 1, grid, movement_manager)
+testCharacter.health.take_damage(5, "Fire")
 
 
-combat = Combat([testCharacter], [skeleton], turnManager)
-turnManager.startCombat(combat)
+combat = Combat([testCharacter], [skeleton], turn_manager)
+turn_manager.start_combat(combat)
 
-def handle_events():
+def handle_events() -> None:
     global gameActive
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             gameActive = False
         
-        testCharacter.update(event, turnManager)
-        #testcombat.update(event)
+        testCharacter.update(event, turn_manager)
 
-def draw():
-    gameScreen.fill(getColorFromPallette("black"))
+def draw() -> None:
+    gameScreen.fill(get_color_from_pallette("black"))
     grid.draw(gameScreen)
     testCharacter.draw(gameScreen)
     skeleton.draw(gameScreen)
-    #testcombat.draw(gameScreen)
     pygame.display.flip()
 
 while gameActive:

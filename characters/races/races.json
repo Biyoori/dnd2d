@@ -1,7 +1,7 @@
 {
     "Aarakocra": {
-        "abilityScoreBonuses": {"DEX": 2, "WIS": 1},
-        "creatureType": "Humanoid",
+        "ability_score_bonuses": {"DEX": 2, "WIS": 1},
+        "creature_type": "Humanoid",
         "size": "Medium",
         "speed": 25,
         "features": [
@@ -10,8 +10,8 @@
         ]
     },
     "Elf": {
-        "abilityScoreBonuses": {"DEX": 2, "WIS": 1},
-        "creatureType": "Humanoid",
+        "ability_score_bonuses": {"DEX": 2, "WIS": 1},
+        "creature_type": "Humanoid",
         "size": "Medium",
         "speed": 25,
         "features": [

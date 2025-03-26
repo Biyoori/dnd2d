@@ -1,0 +1,68 @@
+from typing import Set, List, TYPE_CHECKING
+from dataclasses import dataclass
+
+if TYPE_CHECKING:
+    from entities.entity import Entity
+
+@dataclass(frozen=True)
+class HealthData:
+    max_hp: int
+    current_hp: int
+    is_alive: bool = True
+    resistances: Set[str] = None
+    immunities: Set[str] = None
+    vulnerabilities: Set[str] = None
+
+    @classmethod
+    def create(cls, base_hp: int, con_mod: int, **kwargs) -> "HealthData":
+        return cls(
+            max_hp=base_hp + con_mod,
+            current_hp=base_hp + con_mod,
+            is_alive=True,
+            resistances=kwargs.get("resistances", set()),
+            immunities=kwargs.get("immunities", set()),
+            vulnerabilities=kwargs.get("vulnerabilities", set()) 
+        )
+    
+@dataclass
+class StatusEffect:
+    name: str
+    duration: int
+    effect: callable
+
+class HealthSystem:
+    def __init__(self, health_data: HealthData, entity: "Entity") -> None:
+        self._data = health_data
+        self._entity = entity
+        self._status_effects: List[StatusEffect] = []
+
+    def take_damage(self, damage, damage_type) -> HealthData: 
+
+        new_hp = max(0, self._data.current_hp - damage)
+        self._data = HealthData(
+            max_hp=self._data.max_hp,
+            current_hp=new_hp,
+            is_alive=new_hp>0,
+            resistances=self._data.resistances,
+            immunities=self._data.immunities,
+            vulnerabilities=self._data.vulnerabilities
+        )
+        print(f"{self._entity.name} takes {damage} {damage_type} damage! Current health: {self._data.current_hp}")
+        return self._data
+    
+    def heal(self, amount: int) -> HealthData:
+        
+        new_hp = min(self._data.max_hp, self._data.current_hp + amount)
+        self._data = HealthData(
+            max_hp=self._data.max_hp,
+            current_hp=new_hp,
+            is_alive=new_hp>0,
+            resistances=self._data.resistances,
+            immunities=self._data.immunities,
+            vulnerabilities=self._data.vulnerabilities
+        )
+        print(f"{self._entity.name} is healed for {amount} hit points! Current health: {self._data.current_hp}")
+        return self._data
+    
+    def set_status(self, status: StatusEffect) -> None:
+        self._status_effects.append(status)

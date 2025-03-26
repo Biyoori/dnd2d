@@ -1,13 +1,13 @@
 class Item:
-    def __init__(self, name: str, description: str, weight: float, value: int, consumable: bool = False):
+    def __init__(self, name: str, description: str, weight: float, value: int, consumable: bool = False) -> None:
         self.name = name
         self.description = description
         self.weight = weight
         self.value = value
         self.consumable = consumable
 
-    def use(self, character):
+    def use(self, character) -> None:
         print(f"{character.name} can't use {self.name}.")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name}: {self.weight}lb, {self.value}gp - {self.description}"

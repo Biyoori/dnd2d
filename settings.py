@@ -1,6 +1,6 @@
 import pygame
 
-screenWidth, screenHeight = 1280, 720
+screen_width, screen_height = 1280, 720
 framerate = 60
 
 COLOR_PALETTE = {
@@ -13,5 +13,5 @@ COLOR_PALETTE = {
     "light-gray": (200,200,200)
 }
 
-def getColorFromPallette(color):
+def get_color_from_pallette(color) -> tuple[int, int, int]:
     return COLOR_PALETTE[color]

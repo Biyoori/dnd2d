@@ -1,61 +1,61 @@
 import pygame
-from settings import getColorFromPallette
+from settings import get_color_from_pallette
 
 class Grid:
-    def __init__(self, size: int = 10, cellSize: int = 64):
-        self._cellSize = cellSize
+    def __init__(self, size: int = 10, cell_size: int = 64) -> None:
+        self._cell_size = cell_size
         self._size = size
         self._matrix = [[0 for _ in range(size)] for _ in range(size)]
-        self._navigationPath: list[tuple[int, int]] = []
+        self._navigation_path: list[tuple[int, int]] = []
 
     @property
-    def cellSize(self) -> int:
-        return self._cellSize
+    def cell_size(self) -> int:
+        return self._cell_size
     
     def size(self) -> int:
         return self._size
     
     @property
-    def navigationPath(self) -> list[tuple[int, int]]:
-        return self._navigationPath.copy()
+    def navigation_path(self) -> list[tuple[int, int]]:
+        return self._navigation_path.copy()
     
-    @navigationPath.setter
-    def navigationPath(self, newPath: list[tuple[int, int]]) -> None:
-        self._navigationPath = newPath
+    @navigation_path.setter
+    def navigation_path(self, new_path: list[tuple[int, int]]) -> None:
+        self._navigation_path = new_path
 
-    def calculatePath(self, startPos: tuple[int, int], endPos: tuple[int, int]) -> list[tuple[int, int]]:
-        startX, startY = startPos
-        endX, endY = endPos
-        calculatedPath = []
+    def calculate_path(self, start_pos: tuple[int, int], end_pos: tuple[int, int]) -> list[tuple[int, int]]:
+        start_x, start_y = start_pos
+        end_x, end_y = end_pos
+        calculated_path = []
 
-        deltaX = abs(endX - startX)
-        deltaY = abs(endY - startY)
+        delta_x = abs(end_x - start_x)
+        delta_y = abs(end_y - start_y)
 
-        stepX = 1 if startX < endX else -1
-        stepY = 1 if startY < endY else -1
+        step_x = 1 if start_x < end_x else -1
+        step_y = 1 if start_y < end_y else -1
         
-        error = deltaX - deltaY
+        error = delta_x - delta_y
 
-        while endX != startX or endY != startY:
-            calculatedPath.append((startX, startY))
-            doubledError = 2 * error
+        while end_x != start_x or end_y != start_y:
+            calculated_path.append((start_x, start_y))
+            doubled_error = 2 * error
 
-            if doubledError > -deltaY:
-                error -= deltaY
-                startX += stepX
+            if doubled_error > -delta_y:
+                error -= delta_y
+                start_x += step_x
 
-            if doubledError < deltaX:
-                error += deltaX
-                startY += stepY
+            if doubled_error < delta_x:
+                error += delta_x
+                start_y += step_y
 
-        calculatedPath.append((endX, endY))   
-        return calculatedPath
+        calculated_path.append((end_x, end_y))   
+        return calculated_path
     
     def draw(self, screen: pygame.Surface) -> None:
-        gray = getColorFromPallette("gray")
-        green = getColorFromPallette("green")
+        gray = get_color_from_pallette("gray")
+        green = get_color_from_pallette("green")
 
-        for row, gridRow in enumerate(self._matrix):
-            for col, _ in enumerate(gridRow):
-                cellColor = green if (col, row) in self._navigationPath else gray    
-                pygame.draw.rect(screen, cellColor, (col*self.cellSize, row*self.cellSize, self.cellSize-1, self.cellSize-1))
+        for row, grid_row in enumerate(self._matrix):
+            for col, _ in enumerate(grid_row):
+                cell_color = green if (col, row) in self._navigation_path else gray    
+                pygame.draw.rect(screen, cell_color, (col*self.cell_size, row*self.cell_size, self.cell_size-1, self.cell_size-1))

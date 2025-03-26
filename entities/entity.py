@@ -1,64 +1,64 @@
 import pygame
-from entities.controllers.entityPathfinder import EntityPathfinder
-from entities.controllers.movementController import EntityMovement
-from entities.controllers.entityInputHandler import EntityInputHandler
-from entities.entityRenderer import EntityRenderer
+from entities.controllers.entity_pathfinder import EntityPathfinder
+from entities.controllers.movement_controller import EntityMovement
+from entities.controllers.entity_input_handler import EntityInputHandler
+from entities.entity_renderer import EntityRenderer
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from core.grid import Grid
+    from movement.movement_manager import MovementManager
+    from combat.turn_manager import TurnManager
 
 class Entity:
-    def __init__(self, color: tuple[int,int,int], movementSpeed: int):
-        self._gridX, self._gridY = 0, 0
+    def __init__(self, color: tuple[int,int,int], movement_speed: int) -> None:
+        self._grid_x, self._grid_y = 0, 0
         self._position = pygame.Vector2(0, 0)    
         self.color = color
         self._size = 32
-        self._maxTiles = movementSpeed // 5
+        self._max_tiles = movement_speed // 5
 
     @property
-    def gridPosition(self) -> list[int, int]:
-        return [self._gridX, self._gridY]
+    def grid_position(self) -> list[int, int]:
+        return [self._grid_x, self._grid_y]
     
-    def setGridPosition(self, x: int, y: int):
-        self._gridX, self._gridY = x, y
+    def set_grid_position(self, x: int, y: int) -> None:
+        self._grid_x, self._grid_y = x, y
 
     @property
     def size(self) -> int:
         return self._size
     
     @property
-    def maxTiles(self) -> int:
-        return self._maxTiles
+    def max_tiles(self) -> int:
+        return self._max_tiles
     
     @property
     def position(self) -> pygame.Vector2:
         return self._position
 
     @position.setter
-    def position(self, newPosition: pygame.Vector2) -> None:
-        self._position = newPosition
+    def position(self, new_position: pygame.Vector2) -> None:
+        self._position = new_position
 
-    def initialize(self, x: int, y: int, grid: "Grid", movementManager: "MovementManager") -> None: # type: ignore
-        self.setGridPosition(x, y)
-        self._size = grid.cellSize // 2
-        self.setPosition(grid)
+    def initialize(self, x: int, y: int, grid: "Grid", movement_manager: "MovementManager") -> None:
+        self.set_grid_position(x, y)
+        self._size = grid.cell_size // 2
+        self.set_position(grid)
 
         self.pathfinder = EntityPathfinder(grid)
-        self.movement = EntityMovement(self, grid, movementManager, self.pathfinder)
-        self.inputHandler = EntityInputHandler(self, grid, self.movement)
+        self.movement = EntityMovement(self, grid, movement_manager, self.pathfinder)
+        self.input_handler = EntityInputHandler(self, grid, self.movement)
         self.renderer = EntityRenderer(self, grid)
         
-    def setPosition(self, grid: "Grid") -> None: # type: ignore
+    def set_position(self, grid: "Grid") -> None:
         self._position = pygame.Vector2(
-            self._gridX * grid.cellSize + grid.cellSize / 4, 
-            self._gridY * grid.cellSize + grid.cellSize / 4
+            self._grid_x * grid.cell_size + grid.cell_size / 4, 
+            self._grid_y * grid.cell_size + grid.cell_size / 4
         )
 
-    def update(self, event: pygame.event, turnManager: "TurnManager") -> None:  # type: ignore
-        self.inputHandler.handleEvent(event, turnManager)
+    def update(self, event: pygame.event, turn_manager: "TurnManager") -> None:
+        self.input_handler.handle_event(event, turn_manager)
 
     def draw(self, surface: pygame.Surface) -> None:
         self.renderer.draw(surface)
-
-    def takeDamage(self, damage: int, damageType: str) -> None:
-        self.hitPoints -= damage
-        print(f"{self.name} takes {damage} {damageType} damage! Current health: {self.hitPoints}")
-    
-    

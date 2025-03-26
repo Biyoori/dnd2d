@@ -1,6 +1,6 @@
 from characters.classes.characterClass import CharacterClass
 
-STARTING_SKILL_PROFICIENCY_OPTIONS = [
+SKILL_PROFICIENCIES = [
     "Animal Handling",
     "Athletics",
     "Intimidation",
@@ -10,5 +10,5 @@ STARTING_SKILL_PROFICIENCY_OPTIONS = [
 ]
 
 class Barbarian(CharacterClass):
-    def __init__(self):
-        super().__init__("Barbarian", 12, ["Strength", "Constitution"], STARTING_SKILL_PROFICIENCY_OPTIONS, 2)
+    def __init__(self) -> None:
+        super().__init__("Barbarian", 12, ["Strength", "Constitution"], SKILL_PROFICIENCIES, 2)
