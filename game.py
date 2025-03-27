@@ -23,7 +23,7 @@ turn_manager = TurnManager(movement_manager)
 
 grid = Grid()
 
-menu = RadialMenu()
+menu = RadialMenu(6)
 
 testCharacter = character_creator.run()
 skeleton = enemy_factory.create_enemy(grid, "skeleton")
