@@ -6,6 +6,8 @@ from movement.movement_manager import MovementManager
 from factories.enemy_factory import EnemyFactory
 from ai.skeleton_ai import SkeletonAi
 from ui.character_creator.character_creator import CharacterCreator
+from ui.radial_menu.components.sector_factory import SectorFactory
+from ui.radial_menu.radial_menu import RadialMenu
 from ui.utils.text_renderer import init
 
 pygame.init()
@@ -20,6 +22,8 @@ movement_manager = MovementManager()
 turn_manager = TurnManager(movement_manager)
 
 grid = Grid()
+
+menu = RadialMenu()
 
 testCharacter = character_creator.run()
 skeleton = enemy_factory.create_enemy(grid, "skeleton")
@@ -44,7 +48,12 @@ def handle_events() -> None:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             gameActive = False
-        
+        if event.type == pygame.MOUSEBUTTONDOWN: 
+            if event.button == 3:
+                menu.open_at(event.pos)
+            elif event.button == 1:
+                menu.close()
+                
         testCharacter.update(event, turn_manager)
 
 def draw() -> None:
@@ -52,6 +61,7 @@ def draw() -> None:
     grid.draw(gameScreen)
     testCharacter.draw(gameScreen)
     skeleton.draw(gameScreen)
+    menu.draw(gameScreen)
     pygame.display.flip()
 
 while gameActive:

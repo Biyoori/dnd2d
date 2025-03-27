@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fantasy Right-Click Menu</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IM+Fell+DWARICA&display=swap');
+        
+        body {
+            background: url('https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'IM Fell DWARICA', serif;
+            color: #e0d6b5;
+            cursor: url('https://cdn.pixabay.com/photo/2017/08/01/11/48/wizard-2564385_1280.png'), auto;
+        }
+        
+        .menu-container {
+            position: absolute;
+            display: none;
+            filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.7));
+            z-index: 1000;
+        }
+        
+        .radial-menu {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            border-radius: 50%;
+            background-color: rgba(26, 26, 26, 0.85);
+            border: 2px solid #5e4b2a;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+        
+        .menu-center {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: rgba(94, 75, 42, 0.7);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid #e0d6b5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            text-align: center;
+            z-index: 10;
+        }
+        
+        .menu-items {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+        
+        .menu-item {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            color: #e0d6b5;
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-radius: 50%;
+        }
+        
+        /* Pozycjonowanie elementów wokół środka */
+        .menu-item:nth-child(1) { top: 20px; left: 50%; transform: translateX(-50%); }
+        .menu-item:nth-child(2) { top: 70px; right: 30px; }
+        .menu-item:nth-child(3) { bottom: 70px; right: 30px; }
+        .menu-item:nth-child(4) { bottom: 20px; left: 50%; transform: translateX(-50%); }
+        .menu-item:nth-child(5) { bottom: 70px; left: 30px; }
+        .menu-item:nth-child(6) { top: 70px; left: 30px; }
+        
+        .menu-item:hover {
+            background: rgba(94, 75, 42, 0.4);
+            color: #f8e8b0;
+            text-shadow: 0 0 5px rgba(248, 232, 176, 0.7);
+        }
+        
+        .menu-item.disabled {
+            color: #666;
+            pointer-events: none;
+        }
+        
+        .menu-item i {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        /* Corner ornaments */
+        .ornament {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M20,50 Q50,20 80,50 Q50,80 20,50" fill="none" stroke="%235e4b2a" stroke-width="2"/></svg>');
+            background-repeat: no-repeat;
+            z-index: 20;
+        }
+        
+        .ornament.top-left { top: 10px; left: 10px; }
+        .ornament.top-right { top: 10px; right: 10px; transform: scaleX(-1); }
+        .ornament.bottom-left { bottom: 10px; left: 10px; transform: scaleY(-1); }
+        .ornament.bottom-right { bottom: 10px; right: 10px; transform: scale(-1); }
+        
+        /* Submenu styles */
+        .submenu {
+            position: absolute;
+            width: 200px;
+            background-color: rgba(26, 26, 26, 0.95);
+            border: 1px solid #5e4b2a;
+            border-radius: 5px;
+            padding: 10px;
+            display: none;
+            z-index: 100;
+        }
+        
+        .submenu-item {
+            padding: 8px;
+            margin: 2px 0;
+            border-bottom: 1px solid #5e4b2a;
+            cursor: pointer;
+        }
+        
+        .submenu-item:hover {
+            background-color: rgba(94, 75, 42, 0.4);
+            color: #f8e8b0;
+        }
+        
+        .submenu-item.disabled {
+            color: #666;
+            pointer-events: none;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="menu-container" id="radialMenu">
+        <div class="radial-menu">
+            <div class="ornament top-left"></div>
+            <div class="ornament top-right"></div>
+            <div class="ornament bottom-left"></div>
+            <div class="ornament bottom-right"></div>
+            
+            <div class="menu-center">Actions</div>
+            
+            <div class="menu-items">
+                <div class="menu-item" id="attackBtn">
+                    <i class="fas fa-sword"></i>
+                    <span>Attack</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-book-spells"></i>
+                    <span>Abilities</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-pouch"></i>
+                    <span>Items</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-boot"></i>
+                    <span>Move</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-hand-holding-medical"></i>
+                    <span>Help</span>
+                </div>
+                <div class="menu-item disabled">
+                    <i class="fas fa-running"></i>
+                    <span>Flee</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Attack Submenu -->
+        <div class="submenu" id="attackSubmenu">
+            <div class="submenu-item">
+                <i class="fas fa-sword"></i> Longsword
+            </div>
+            <div class="submenu-item">
+                <i class="fas fa-wand-sparkles"></i> Firebolt
+            </div>
+            <div class="submenu-item">
+                <i class="fas fa-throwing-star"></i> Throw Dagger
+            </div>
+            <div class="submenu-item disabled">
+                <i class="fas fa-bow-arrow"></i> Shortbow (no ammo)
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            
+            const menu = document.getElementById('radialMenu');
+            menu.style.display = 'block';
+            
+            // Adjust position to keep menu fully visible
+            const menuWidth = 300;
+            const menuHeight = 300;
+            const x = Math.min(e.clientX, window.innerWidth - menuWidth - 10);
+            const y = Math.min(e.clientY, window.innerHeight - menuHeight - 10);
+            
+            menu.style.left = `${x}px`;
+            menu.style.top = `${y}px`;
+            
+            // Play sound effect (would need actual audio file in real implementation)
+            console.log("Playing paper/sword sound effect");
+        });
+        
+        document.addEventListener('click', function() {
+            document.getElementById('radialMenu').style.display = 'none';
+            document.getElementById('attackSubmenu').style.display = 'none';
+        });
+        
+        document.getElementById('attackBtn').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const submenu = document.getElementById('attackSubmenu');
+            submenu.style.display = 'block';
+            
+            // Position submenu next to the clicked item
+            const rect = e.target.getBoundingClientRect();
+            submenu.style.left = `${rect.right + 5}px`;
+            submenu.style.top = `${rect.top}px`;
+        });
+        
+        // Close submenu when clicking elsewhere
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.submenu')) {
+                document.getElementById('attackSubmenu').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
