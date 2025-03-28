@@ -9,23 +9,30 @@ from .services.event_handler import SectorClickHandler, HoverEffectHandler, Even
 class RadialMenu:
     def __init__(self, sector_count: int = 6) -> None:
         base_image = load_image("Assets/UI/Radial_Menu/Sector.png")
+        hover_image = load_image("Assets/UI/Radial_Menu/Hover.png")
         border = load_image("Assets/UI/Radial_Menu/Border.png")
-        combined = pygame.Surface((120,120), pygame.SRCALPHA)
-        combined.blit(base_image,(0,0))
-        combined.blit(border,(0,0))
+        combined = pygame.Surface((120, 120), pygame.SRCALPHA)
+        combined.blit(base_image, (0, 0))
+        combined.blit(border, (0, 0))
+
+        combined_hover = pygame.Surface((120, 120), pygame.SRCALPHA)
+        combined_hover.blit(hover_image, (0, 0))
+        combined_hover.blit(border, (0, 0))
+
         self.sectors = [
-            RadialSector(combined, i * (360/sector_count))
+            RadialSector(combined, combined_hover, i * (360/sector_count))
             for i in range(sector_count)
         ]
 
         self.position: Tuple[int, int] = None
         self.active: bool = False
         self.radius: int = 60
+        self.sector_count = sector_count
 
     def _init_event_handlers(self) -> List["EventHandler"]:
         return [
             #SectorClickHandler(self.sectors),
-            #HoverEffectHandler(self.sectors)
+            HoverEffectHandler(self.sectors, self.position, self.sector_count)
         ]
     
     def open_at(self, position: Tuple[int, int]) -> None:
@@ -35,8 +42,12 @@ class RadialMenu:
     def close(self) -> None:
         self.active = False
 
-    def process_events(self):
-        pass
+    def process_events(self, event: pygame.event.Event) -> None:
+        if not self.active:
+            return
+
+        for handler in self._init_event_handlers():
+            handler.handle(event)
 
     def draw(self, surface: "pygame.Surface") -> None:
         if not self.active:

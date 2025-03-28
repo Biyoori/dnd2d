@@ -55,6 +55,7 @@ def handle_events() -> None:
                 menu.close()
                 
         testCharacter.update(event, turn_manager)
+        menu.process_events(event)
 
 def draw() -> None:
     gameScreen.fill(get_color_from_pallette("black"))
