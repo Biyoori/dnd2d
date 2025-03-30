@@ -74,3 +74,19 @@ class RadialMenu:
     def _execute_attack(self) -> None:
         if "attack" in self.actions:
             self.actions["attack"]()
+
+    def enable_sector(self, sector_name: str, enable: bool = True) -> None:
+        for sector in self.sectors:
+            if sector.icon and sector.icon.text == sector_name:
+                sector.enabled = enable
+                break
+        
+    def enable_all_sectors(self, enable: bool = True) -> None:
+        for sector in self.sectors:
+            sector.enabled = enable
+
+    def get_sector(self, sector_name: str):
+        for sector in self.sectors:
+            if sector.icon and sector.icon.text == sector_name:
+                return sector
+            return None

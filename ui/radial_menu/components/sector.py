@@ -1,5 +1,5 @@
 from typing import Tuple, Optional
-from ..components.icon import Icon
+from ..components.icon import Icon, TextIcon
 import math
 import pygame
 
@@ -11,6 +11,7 @@ class RadialSector:
         self.rect = self.image.get_rect()
         self.hovered = False
         self.radius = 120
+        self.enabled = True
 
         #Icon
         self.icon = icon
@@ -20,7 +21,12 @@ class RadialSector:
 
     def draw(self, surface: pygame.Surface, center_pos: Tuple[int, int]) -> None:
         self.rect.center = center_pos
-        current_image = self.hover_image if self.hovered else self.image
+        current_image = self.hover_image if self.hovered else self.image   
+
+        if not self.enabled:
+            current_image = current_image.copy()
+            current_image.fill((100, 100, 100, 150), special_flags=pygame.BLEND_MULT)
+
         surface.blit(current_image, self.rect)
 
         if self.icon:
@@ -29,9 +35,17 @@ class RadialSector:
             icon_x = center_pos[0] + icon_distance * math.cos(angle_rad)
             icon_y = center_pos[1] + icon_distance * math.sin(angle_rad)
 
-            self.icon.draw(surface, (icon_x, icon_y))
+        if not self.enabled and isinstance(self.icon, TextIcon):
+            self.icon.color = (100, 100, 100)
+            self.icon.text_surface = self.icon.font.render(self.icon.text, True, self.icon.color)
+
+        self.icon.draw(surface, (icon_x, icon_y))
 
     def check_hover(self, mouse_pos: Tuple[int, int], menu_center: Tuple[int, int], total_sectors: int) -> bool:
+        if not self.enabled:
+            self.hovered = False
+            return False
+        
         mouse_x, mouse_y = mouse_pos
         center_x, center_y = menu_center
 

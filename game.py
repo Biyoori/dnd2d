@@ -30,12 +30,14 @@ skeleton = enemy_factory.create_enemy(grid, "skeleton")
 
 testCharacter.inventory.add_item(Weapon("Axe", "", 1, 1, "", "2d4"))
 testCharacter.weapon_system.equip_weapon("Axe")
+
 actions = {
      "attack" : testCharacter.weapon_system.get_equipped_weapon().attack
 }
 
 menu = RadialMenu(actions)
-
+menu.enable_all_sectors(False)
+menu.enable_sector("Attack")
 
 
 print(f"Created: ")
