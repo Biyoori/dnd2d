@@ -1,5 +1,5 @@
 import pygame
-from settings import get_color_from_pallette
+from settings import get_color
 
 _screen = None
 _font = None
@@ -16,7 +16,7 @@ def draw_text(text: str, x: int, y: int, color: tuple[int,int,int]=None, align_c
     if _screen is None or _font is None:
         raise RuntimeError("TextRenderer was not initialized. Try using init() first.")
     
-    color = color or get_color_from_pallette("white")
+    color = color or get_color("white")
     font = _font if font_size is None else pygame.font.SysFont(None, font_size)
     text_surface = font.render(text, True, color)
 

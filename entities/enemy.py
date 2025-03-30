@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from entities.components.health import HealthData, HealthSystem
 from entities.components.stats import AbilityScores, Proficiencies, StatsSystem
 from health_calculator import HealthCalculator
-from settings import get_color_from_pallette
+from settings import get_color
 from ai.skeleton_ai import SkeletonAi
 from entities.entity import Entity
 
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 class Enemy(Entity):
     def __init__(self, grid: "Grid", **kwargs) -> None:
-        super().__init__(get_color_from_pallette("blue"), kwargs.get("speed"))
+        super().__init__(get_color("blue"), kwargs.get("speed"))
 
         self.grid = grid
 

@@ -2,7 +2,8 @@ from core.feat_loader import get_feat
 from entities.components.health import HealthData, HealthSystem
 from entities.components.inventory import InventoryData, InventorySystem
 from entities.components.stats import AbilityScores, Proficiencies, StatsSystem
-from settings import get_color_from_pallette
+from entities.components.weapons import WeaponSystem
+from settings import get_color
 from entities.entity import Entity
 from health_calculator import HealthCalculator
 from typing import TYPE_CHECKING
@@ -21,7 +22,7 @@ class Character(Entity):
             ability_scores: dict[str,int],
             skill_proficiencies: list[str]
         ) -> None: 
-        super().__init__(get_color_from_pallette("red"), race.walking_speed)
+        super().__init__(get_color("red"), race.walking_speed)
         self.name = name
         self.experience = 0      
         self.armor_class = 10
@@ -39,6 +40,9 @@ class Character(Entity):
         #Inventory
         inventory_data = InventoryData([])
         self.inventory = InventorySystem(inventory_data)
+
+        #Weapon System
+        self.weapon_system = WeaponSystem(self.inventory)
         
         # Hit Points
         hp = HealthCalculator.calc_character(self.character_classes, self.stats)

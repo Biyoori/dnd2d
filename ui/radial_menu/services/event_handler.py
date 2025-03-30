@@ -1,27 +1,40 @@
 from abc import ABC, abstractmethod
+from math import e
 from typing import List, Tuple
 from ui.radial_menu.components.sector import RadialSector
 import pygame
 
 class EventHandler(ABC):
     @abstractmethod
-    def handle(self, event: "pygame.event.Event") -> bool:
+    def handle(self, event: "pygame.event") -> bool:
         pass
 
 class SectorClickHandler(EventHandler):
-    def handle(self, event: "pygame.event.Event") -> bool:
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            return self._check_sector_collision(event.pos)
+    def __init__(self, sectors: List[RadialSector]) -> None:
+        self.sectors = sectors
+        self.sector_count = 6
+
+    def update_menu_center(self, new_center: Tuple[int,int]) -> None:
+        self._menu_center = new_center
+
+    def handle(self, event: pygame.event):
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            mouse_pos = event.pos
+            for sector in self.sectors:
+                if sector.check_hover(mouse_pos, self._menu_center, self.sector_count):
+                    sector.on_click()
         
 class HoverEffectHandler(EventHandler):
-    def __init__(self, sectors: List[RadialSector], menu_center: Tuple[int, int], sector_count: int) -> None:
+    def __init__(self, sectors: List[RadialSector]) -> None:
         self.sectors = sectors
-        self.menu_center = menu_center
-        self.sector_count = sector_count
+        self.sector_count = 6
 
-    def handle(self, event: "pygame.event.Event") -> bool:
+    def update_menu_center(self, new_center: Tuple[int,int]) -> None:
+        self._menu_center = new_center
+
+    def handle(self, event: pygame.event) -> bool:
         if event.type == pygame.MOUSEMOTION:
             mouse_pos = event.pos
             for sector in self.sectors:
-                sector.check_hover(mouse_pos, self.menu_center, self.sector_count)
+                sector.check_hover(mouse_pos, self._menu_center, self.sector_count)
         return False

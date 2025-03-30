@@ -10,8 +10,9 @@ COLOR_PALETTE = {
     "red": (248, 156, 116),
     "blue": (102, 197, 204),
     "green": (135, 197, 95),
-    "light-gray": (200,200,200)
+    "light-gray": (200,200,200),
+    "gold": (224, 214, 181)
 }
 
-def get_color_from_pallette(color) -> tuple[int, int, int]:
+def get_color(color) -> tuple[int, int, int]:
     return COLOR_PALETTE[color]

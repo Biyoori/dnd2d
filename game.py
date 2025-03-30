@@ -1,3 +1,5 @@
+from pygame import MOUSEBUTTONDOWN
+from items.weapon import Weapon
 from settings import *
 from core.grid import Grid
 from combat.combat import Combat
@@ -23,10 +25,18 @@ turn_manager = TurnManager(movement_manager)
 
 grid = Grid()
 
-menu = RadialMenu(6)
-
 testCharacter = character_creator.run()
 skeleton = enemy_factory.create_enemy(grid, "skeleton")
+
+testCharacter.inventory.add_item(Weapon("Axe", "", 1, 1, "", "2d4"))
+testCharacter.weapon_system.equip_weapon("Axe")
+actions = {
+     "attack" : testCharacter.weapon_system.get_equipped_weapon().attack
+}
+
+menu = RadialMenu(actions)
+
+
 
 print(f"Created: ")
 testCharacter.display_character_info()
@@ -37,7 +47,6 @@ gameActive = True
 
 skeleton.initialize(4,4,grid,movement_manager)
 testCharacter.initialize(1, 1, grid, movement_manager)
-testCharacter.health.take_damage(5, "Fire")
 
 
 combat = Combat([testCharacter], [skeleton], turn_manager)
@@ -51,14 +60,16 @@ def handle_events() -> None:
         if event.type == pygame.MOUSEBUTTONDOWN: 
             if event.button == 3:
                 menu.open_at(event.pos)
-            elif event.button == 1:
-                menu.close()
+            
                 
         testCharacter.update(event, turn_manager)
         menu.process_events(event)
 
+        if event.type == MOUSEBUTTONDOWN and event.button == 1:
+                menu.close()
+
 def draw() -> None:
-    gameScreen.fill(get_color_from_pallette("black"))
+    gameScreen.fill(get_color("black"))
     grid.draw(gameScreen)
     testCharacter.draw(gameScreen)
     skeleton.draw(gameScreen)

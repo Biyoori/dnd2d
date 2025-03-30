@@ -1,5 +1,5 @@
 import pygame
-from settings import get_color_from_pallette
+from settings import get_color
 
 class Grid:
     def __init__(self, size: int = 10, cell_size: int = 64) -> None:
@@ -52,8 +52,8 @@ class Grid:
         return calculated_path
     
     def draw(self, screen: pygame.Surface) -> None:
-        gray = get_color_from_pallette("gray")
-        green = get_color_from_pallette("green")
+        gray = get_color("gray")
+        green = get_color("green")
 
         for row, grid_row in enumerate(self._matrix):
             for col, _ in enumerate(grid_row):

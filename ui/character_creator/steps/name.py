@@ -1,5 +1,5 @@
 import pygame
-from settings import get_color_from_pallette
+from settings import get_color
 from .creation_step import CreationStep
 from .class_ import ClassStep
 from ui.utils.text_renderer import draw_text
@@ -9,8 +9,8 @@ class NameStep(CreationStep):
 
     def draw(self) -> None:
         draw_text("Enter characters name", self.center_x, self.center_y-40)
-        pygame.draw.rect(self.creator.screen, get_color_from_pallette("light-gray"), (self.center_x-120, self.center_y-20,240,40), 2)
-        pygame.draw.rect(self.creator.screen, get_color_from_pallette("black"), (self.center_x-110, self.center_y-15, 220, 30))
+        pygame.draw.rect(self.creator.screen, get_color("light-gray"), (self.center_x-120, self.center_y-20,240,40), 2)
+        pygame.draw.rect(self.creator.screen, get_color("black"), (self.center_x-110, self.center_y-15, 220, 30))
         draw_text(f"{self.creator.character_name}", self.center_x, self.center_y)
 
     def handle_event(self, event: pygame.event) -> None:

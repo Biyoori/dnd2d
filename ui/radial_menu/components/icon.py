@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Tuple
-from settings import get_color_from_pallette
+from typing import Tuple
+from settings import get_color
 from ui.utils.graphics_loader import load_image
 import pygame
     
@@ -20,5 +20,13 @@ class ImageIcon(Icon):
         surface.blit(self.image, pos)
 
 class TextIcon(Icon):
-    def __init__(self, text: str, font: pygame.font.Font) -> None:
-        self.text_surface = font.render(text, True, get_color_from_pallette("white"))
+    def __init__(self, text: str, font: pygame.font.Font, color: Tuple[int, int, int] = get_color("white")) -> None:
+        self.text = text
+        self.font = font
+        self.color = color
+        self.text_surface = font.render(text, True, color)
+        self.rect = self.text_surface.get_rect()
+
+    def draw(self, surface: pygame.Surface, pos: Tuple[int, int]) -> None:
+        self.rect.center = pos
+        surface.blit(self.text_surface, self.rect)
