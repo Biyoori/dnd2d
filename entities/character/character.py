@@ -1,7 +1,10 @@
 from core.feat_loader import get_feat
+from entities.components.attack import AttackSystem
+from entities.components.factions import Faction, FactionSystem
 from entities.components.health import HealthData, HealthSystem
 from entities.components.inventory import InventoryData, InventorySystem
 from entities.components.stats import AbilityScores, Proficiencies, StatsSystem
+from entities.components.target import TargetingSystem
 from entities.components.weapons import WeaponSystem
 from settings import get_color
 from entities.entity import Entity
@@ -22,7 +25,7 @@ class Character(Entity):
             ability_scores: dict[str,int],
             skill_proficiencies: list[str]
         ) -> None: 
-        super().__init__(get_color("red"), race.walking_speed)
+        super().__init__(get_color("red"), race.walking_speed, Faction.PLAYER)
         self.name = name
         self.experience = 0      
         self.armor_class = 10
@@ -43,6 +46,11 @@ class Character(Entity):
 
         #Weapon System
         self.weapon_system = WeaponSystem(self.inventory)
+
+        #Attacking and Targeting
+        factions = FactionSystem()
+        self.targeting = TargetingSystem(factions)
+        self.attacking = AttackSystem()
         
         # Hit Points
         hp = HealthCalculator.calc_character(self.character_classes, self.stats)

@@ -1,14 +1,19 @@
+from entity_manager import GameEntityManager
+from ui.radial_menu.components.sector_actions import Actions
 from ui.radial_menu.services.renderer import MenuRenderer
 from .services.positioning import MenuPositioning
 from .services.event_handler import SectorClickHandler, HoverEffectHandler, EventHandler
 from ui.radial_menu.components.sector_factory import SectorFactory
 from .components.sector import RadialSector
-from typing import Callable, Tuple, List, Dict
+from typing import Tuple, List, TYPE_CHECKING 
 import pygame
+
+if TYPE_CHECKING:
+    from core.grid import Grid
 
 
 class RadialMenu:
-    def __init__(self, action_handlers: Dict[str, Callable]) -> None:
+    def __init__(self, entity_manager: GameEntityManager, grid: "Grid") -> None:
         self.active: bool = False
         self.radius: int = 60  
 
@@ -16,7 +21,7 @@ class RadialMenu:
         self.renderer = MenuRenderer()
         self.factory = SectorFactory(self.renderer.font)
         
-        self.actions = action_handlers
+        self.actions = Actions(entity_manager, grid)
             
         images = self.renderer.load_images()
         self.sectors = self._create_sectors(*images)
@@ -24,12 +29,12 @@ class RadialMenu:
 
     def _create_sectors(self, base_img:pygame.surface, hover_img: pygame.Surface) -> List[RadialSector]:
         sector_data = [
-            ("Attack", self._execute_attack),
-            ("Magic", self._execute_attack),
-            ("Flee", self._execute_attack),
-            ("Abilities", self._execute_attack),
-            ("Items", self._execute_attack),
-            ("Help", self._execute_attack)
+            ("Attack", self.actions.attack),
+            ("Magic", self.actions.attack),
+            ("Flee", self.actions.attack),
+            ("Abilities", self.actions.attack),
+            ("Items", self.actions.attack),
+            ("Help", self.actions.attack)
         ]
 
         return [
@@ -70,10 +75,6 @@ class RadialMenu:
         for i, sector in enumerate(self.sectors):
             pos = self.positioning.calculate_position(i)
             self.renderer.render(surface, sector, pos)
-    
-    def _execute_attack(self) -> None:
-        if "attack" in self.actions:
-            self.actions["attack"]()
 
     def enable_sector(self, sector_name: str, enable: bool = True) -> None:
         for sector in self.sectors:

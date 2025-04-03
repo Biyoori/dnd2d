@@ -1,5 +1,6 @@
 import importlib
 from typing import TYPE_CHECKING
+from entities.components.factions import Faction
 from entities.components.health import HealthData, HealthSystem
 from entities.components.stats import AbilityScores, Proficiencies, StatsSystem
 from health_calculator import HealthCalculator
@@ -13,7 +14,7 @@ if TYPE_CHECKING:
 
 class Enemy(Entity):
     def __init__(self, grid: "Grid", **kwargs) -> None:
-        super().__init__(get_color("blue"), kwargs.get("speed"))
+        super().__init__(get_color("blue"), kwargs.get("speed"), Faction.ENEMY)
 
         self.grid = grid
 

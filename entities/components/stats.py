@@ -57,8 +57,8 @@ class StatsSystem:
     
     def determine_attack_attribute(self, weapon: "Weapon") -> int:
         if weapon.weapon_type == "melee" and not weapon.finesse:
-            return self._abilities.str_mod
-        return self._abilities.dex_mod if self._abilities.dex_mod > self._abilities.str_mod else self._abilities.str_mod
+            return self._abilities.get_mod("STR")
+        return self._abilities.get_mod("DEX") if self._abilities.get_mod("DEX") > self._abilities.get_mod("STR") else self._abilities.get_mod("STR")
 
     def roll_skill_check(self, skill: str) -> tuple[int, int]:
         if skill not in self.SKILLS:
