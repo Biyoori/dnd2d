@@ -1,5 +1,6 @@
 from typing import Set, List, TYPE_CHECKING
 from dataclasses import dataclass
+from ui.game_console import console
 
 if TYPE_CHECKING:
     from entities.entity import Entity
@@ -47,7 +48,7 @@ class HealthSystem:
             immunities=self._data.immunities,
             vulnerabilities=self._data.vulnerabilities
         )
-        print(f"{self._entity.name} takes {damage} {damage_type} damage! Current health: {self._data.current_hp}")
+        console.log(f"{self._entity.name} takes {damage} {damage_type} damage! Current health: {self._data.current_hp}")
         return self._data
     
     def heal(self, amount: int) -> HealthData:
@@ -61,7 +62,7 @@ class HealthSystem:
             immunities=self._data.immunities,
             vulnerabilities=self._data.vulnerabilities
         )
-        print(f"{self._entity.name} is healed for {amount} hit points! Current health: {self._data.current_hp}")
+        console.log(f"{self._entity.name} is healed for {amount} hit points! Current health: {self._data.current_hp}")
         return self._data
     
     def set_status(self, status: StatusEffect) -> None:

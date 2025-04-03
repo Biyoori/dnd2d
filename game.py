@@ -7,7 +7,9 @@ from combat.turn_manager import TurnManager
 from movement.movement_manager import MovementManager
 from factories.enemy_factory import EnemyFactory
 from ui.character_creator.character_creator import CharacterCreator
+from ui.game_console import console
 from ui.radial_menu.radial_menu import RadialMenu
+from ui.turn_ui import TurnInfo
 from ui.utils import text_renderer
 from entity_manager import GameEntityManager
 
@@ -23,6 +25,7 @@ enemy_factory = EnemyFactory("data/enemies")
 movement_manager = MovementManager()
 turn_manager = TurnManager(movement_manager)
 entity_manager = GameEntityManager()
+turn_info = TurnInfo(turn_manager, gameScreen)
 
 grid = Grid()
 
@@ -48,7 +51,6 @@ gameActive = True
 entity_manager.get_enemies()[0].initialize(4,4,grid,movement_manager)
 entity_manager.get_character().initialize(1, 1, grid, movement_manager)
 
-
 combat = Combat([entity_manager.get_character()], [entity_manager.get_enemies()[0]], turn_manager)
 turn_manager.start_combat(combat)
 
@@ -67,7 +69,7 @@ def handle_events() -> None:
             elif event.button == 1:
                  menu.close()
                  if entity_manager.get_character().targeting.target_selection:
-                      entity_manager.get_character().targeting.handle_target_selection(event.pos, grid, entity_manager.get_character().attacking, entity_manager.get_character())
+                      entity_manager.get_character().targeting.handle_target_selection(event.pos, grid, entity_manager.get_character().attacking, entity_manager.get_character(), turn_manager)
             
                       
 
@@ -77,6 +79,8 @@ def draw() -> None:
     entity_manager.get_character().draw(gameScreen)
     entity_manager.get_enemies()[0].draw(gameScreen)
     menu.draw(gameScreen)
+    turn_info.draw()
+    console.draw(gameScreen)
     pygame.display.flip()
 
 while gameActive:

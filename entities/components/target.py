@@ -6,6 +6,7 @@ if TYPE_CHECKING:
     from entities.entity import Entity
     from core.grid import Grid
     from entities.components.attack import AttackSystem
+    from combat.turn_manager import TurnManager
 
 class TargetingSystem:
     def __init__(self, faction_system: "FactionSystem") -> None:
@@ -33,14 +34,15 @@ class TargetingSystem:
         distance = max(abs(attacker_position_x - target.grid_position[0]), abs(attacker_position_y - target.grid_position[1]))
         return distance <= range
     
-    def handle_target_selection(self, mouse_pos: Tuple[int, int], grid: "Grid", attack_system: "AttackSystem", attacker: "Entity") -> bool:
+    def handle_target_selection(self, mouse_pos: Tuple[int, int], grid: "Grid", attack_system: "AttackSystem", attacker: "Entity", turn_manager: "TurnManager") -> bool:
         clicked_cell = grid.get_cell_at_position(mouse_pos)
         if clicked_cell is None:
             return False
         
         for target in self.current_valid_targets:
             if (target.grid_position[0], target.grid_position[1]) == (clicked_cell[0], clicked_cell[1]):
-                attack_system.resolve_attack(attacker, target)
+                if turn_manager.use_action():
+                    attack_system.resolve_attack(attacker, target)
                 grid.update_enemy_positions([])
                 self.target_selection = False
                 return True

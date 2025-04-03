@@ -27,16 +27,18 @@ class EntityMovement:
             self.grid.navigation_path = self.pathfinder.temp_path + new_path
 
     def finalize_movement(self, turn_manager: "TurnManager") -> None:
-        self.snap_to_grid()
-        self.movement_manager.register_movement(self.entity, len(self.grid.navigation_path) - 1, turn_manager)
+        if self.snap_to_grid():
+            self.movement_manager.register_movement(self.entity, len(self.grid.navigation_path) - 1, turn_manager)
         self.pathfinder.clear_path()
 
-    def snap_to_grid(self) -> None:
+    def snap_to_grid(self) -> bool:
         if self.is_out_of_path():
             self.set_position(self.grid.navigation_path[0][0], self.grid.navigation_path[0][1])
+            return False
         else:
             last_x, last_y = self.grid.navigation_path[-1]
             self.set_position(last_x, last_y)
+            return True
 
     def is_out_of_path(self) -> bool:
         if not self.grid.navigation_path:
