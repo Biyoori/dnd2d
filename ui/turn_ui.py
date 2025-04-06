@@ -14,6 +14,6 @@ class TurnInfo:
 
     def draw(self):
         entity_name = f"{self.turn_manager.get_current_entity().name}" if self.turn_manager.get_current_entity() else "None"
-        text = f"{entity_name} | Actions: {self.turn_manager.actions_remaining} | Bonus: {'Yes' if not self.turn_manager.has_bonus_action() else 'No'}"
+        text = f"{entity_name} | Actions: {self.turn_manager.actions_remaining} | Bonus: {'Yes' if self.turn_manager.has_bonus_action() else 'No'}"
         ui_surface = self.font.render(text, True, (255, 255, 255))
         self.screen.blit(ui_surface, (20, 20))

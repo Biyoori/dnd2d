@@ -13,7 +13,7 @@ class GameConsole:
         self.bg_color = (0, 0, 0, bg_alpha)
         self.text_color = (255, 255, 255)
 
-        self.console_surface = pygame.Surface((self.width, self.font_size * self.max_lines), pygame.SRCALPHA)
+        self.console_surface = pygame.Surface((self.width, self.font_size * self.max_lines + 60), pygame.SRCALPHA)
 
     def log(self, message: str) -> None:
         self.messages.append(message)
@@ -27,7 +27,7 @@ class GameConsole:
         for message in self.messages:
             text_surface = self.font.render(message, True, self.text_color)
             self.console_surface.blit(text_surface, (10, y))
-            y += self.font_size
+            y += self.font_size+10
         screen.blit(self.console_surface, (0, self.height))
 
 console = GameConsole(800, 500)

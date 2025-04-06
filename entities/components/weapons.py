@@ -4,7 +4,6 @@ from items.weapon import Weapon
 if TYPE_CHECKING:
     from entities.components.inventory import InventorySystem
     
-
 class WeaponSystem:
     def __init__(self, inventory: "InventorySystem") -> None:
         self.inventory = inventory
@@ -27,3 +26,6 @@ class WeaponSystem:
             self.equipped_weapon = None
         else:
             print(f"No weapon is currently equipped")
+
+    def equip_weapon_directly(self, weapon: "Weapon") -> None:
+        self.equipped_weapon = weapon

@@ -10,7 +10,10 @@ class Actions:
         self.grid = grid
 
     def attack(self) -> None:
-        print("attacking")
         player = self.entity_manager.get_character()
         enemies = self.entity_manager.get_enemies()
         player.targeting.get_valid_targets(player, enemies, self.grid)
+
+    def abilities(self):
+        player = self.entity_manager.get_character()
+        player.feats.execute("Talons", grid=self.grid, entities=self.entity_manager.get_enemies())

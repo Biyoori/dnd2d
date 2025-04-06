@@ -1,6 +1,7 @@
 from core.feat_loader import get_feat
 from entities.components.attack import AttackSystem
 from entities.components.factions import Faction, FactionSystem
+from entities.components.feats import FeatSystem, FeatsData
 from entities.components.health import HealthData, HealthSystem
 from entities.components.inventory import InventoryData, InventorySystem
 from entities.components.stats import AbilityScores, Proficiencies, StatsSystem
@@ -58,8 +59,9 @@ class Character(Entity):
         self.health = HealthSystem(health_data, self)
 
         # Feats
-        self.feats =  self.load_feats()
-        self.apply_feats()
+        self.feats = FeatSystem(self, FeatsData())
+        for feat in self.load_feats():
+            self.feats.add_feat(feat)
     
     def get_proficiency_bonus(self) -> int:
         level = sum(lvl for lvl in self.character_classes.values())
@@ -67,10 +69,6 @@ class Character(Entity):
     
     def load_feats(self) -> list:
         return [get_feat(feat) for feat in self.race.features]
-    
-    def apply_feats(self) -> None:
-        for feat in self.feats:
-            feat.apply(self)
 
     def pick_up(self, item: "Item") -> None:
         self.inventory.add_item(item)

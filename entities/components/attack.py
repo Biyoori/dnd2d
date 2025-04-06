@@ -1,5 +1,6 @@
 from random import randint
 from typing import TYPE_CHECKING
+from ui.game_console import console
 
 if TYPE_CHECKING:
     from entities.entity import Entity
@@ -12,5 +13,5 @@ class AttackSystem:
             damage = attacker.stats.roll_dice(weapon.damage) + attacker.stats.get_damage_bonus(weapon)
             target.health.take_damage(damage, weapon.damage_type)
         else:
-            print("Attack Missed")
+            console.log("Attack Missed")
             

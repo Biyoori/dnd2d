@@ -10,8 +10,6 @@ class MovementManager:
 
     def reset_movement(self, entity: "Entity") -> None:
         self.movement_used[entity] = 0
-        print(self.movement_used)
-        print(self.movement_used.get(entity, 0))
 
     def can_move(self, entity: "Entity", tiles: int) -> bool:
         max_tiles = entity.max_tiles

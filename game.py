@@ -39,6 +39,7 @@ entity_manager.get_character().weapon_system.equip_weapon("Axe")
 menu = RadialMenu(entity_manager, grid)
 menu.enable_all_sectors(False)
 menu.enable_sector("Attack")
+menu.enable_sector("Abilities")
 
 
 print(f"Created: ")

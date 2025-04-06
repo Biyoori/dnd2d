@@ -17,13 +17,10 @@ class TargetingSystem:
 
     def get_valid_targets(self, attacker: "Entity", entities: List["Entity"], grid: "Grid") -> List["Entity"]:
         self.current_valid_targets = []
-        print(self.current_valid_targets)
 
         for enemy in self.faction_system.get_enemies(entities, attacker.faction):
             if self._is_in_range(attacker, enemy, attacker.weapon_system.get_equipped_weapon().range//5):
                 self.current_valid_targets.append(enemy)
-                print(enemy.grid_position)
-
         grid.update_enemy_positions(self.current_valid_targets)
         self.target_selection = True
         return self.current_valid_targets
