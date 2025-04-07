@@ -1,3 +1,4 @@
+from core.event import Event
 from core.feat_loader import get_feat
 from entities.components.attack import AttackSystem
 from entities.components.factions import Faction, FactionSystem
@@ -63,11 +64,13 @@ class Character(Entity):
         self.feats = FeatSystem(self, FeatsData())
         for feat in self.load_feats():
             self.feats.add_feat(feat)
+        for feat in self.levels.get_primary_class().feats_by_level[1]:
+            self.feats.add_feat(get_feat(feat))
 
         #Level up subscribtions
-        self.levels.on_level_up.subscribe(self.health.increase_health_on_level_up)
-        self.levels.on_level_up.subscribe(self.feats.add_feats_on_level_up)
-        self.levels.on_level_up.subscribe(self.stats.stats_increase_on_level_up)
+        Event.subscribe("level_up", self.health.increase_health_on_level_up)
+        Event.subscribe("level_up", self.feats.add_feats_on_level_up)
+        Event.subscribe("level_up", self.stats.stats_increase_on_level_up)
     
     def get_proficiency_bonus(self) -> int:
         level = sum(lvl for lvl in self.levels.get_classes().values())

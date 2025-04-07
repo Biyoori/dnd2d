@@ -1,7 +1,10 @@
 from feat import Feat
 
-def execute_rage():
+class Rage(Feat):
     pass
+
+def execute_rage(self) -> None:
+    if 
 
 rage = Feat(
     "Rage",

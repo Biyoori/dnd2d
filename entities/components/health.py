@@ -69,6 +69,16 @@ class HealthSystem:
     
     def set_status(self, status: StatusEffect) -> None:
         self._status_effects.append(status)
+        status.effect(self._entity)
+
+    def remove_status(self, status_name: str) -> None:
+        self._status_effect = [status for status in self._status_effects if status.name != status_name]
+
+    def status_update(self) -> None:
+        for status in self._status_effects[:]:
+            status.duration -= 1
+            if status.duration <= 0:
+                self._status_effects.remove(status)
 
     def increase_health_on_level_up(self, level: int, character_class: "CharacterClass", feats: List[str]) -> None:
         new_max_hp: int = ceil(character_class.hit_die/2) + self._entity.stats.get_mod("CON")

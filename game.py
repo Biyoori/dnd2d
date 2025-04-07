@@ -9,6 +9,7 @@ from factories.enemy_factory import EnemyFactory
 from ui.feat_menu_manager import FeatMenuManager
 from ui.character_creator.character_creator import CharacterCreator
 from ui.game_console import console
+from ui.level_up_menu import ClassSelectionUI
 from ui.radial_menu.radial_menu import RadialMenu
 from ui.turn_ui import TurnInfo
 from ui.utils import text_renderer
@@ -20,6 +21,8 @@ gameScreen = pygame.display.set_mode((screen_width, screen_height))
 game_layer = pygame.Surface((screen_width, screen_height))
 character_layer = pygame.Surface((screen_width, screen_height), pygame.SRCALPHA)
 clock = pygame.time.Clock()
+pygame.font.init()
+font = pygame.font.Font("Assets/UI/Fonts/IM_Fell_DW_Pica/IMFellDWPica-Regular.ttf", 24)
 
 text_renderer.init(font_size=40)
 faction_system = FactionSystem()
@@ -30,6 +33,7 @@ turn_manager = TurnManager(movement_manager)
 entity_manager = GameEntityManager()
 turn_info = TurnInfo(turn_manager, gameScreen)
 feat_menu_manager = FeatMenuManager(gameScreen)
+level_up_ui = ClassSelectionUI(gameScreen, font)
 
 grid = Grid()
 
@@ -58,7 +62,7 @@ entity_manager.get_character().initialize(1, 1, grid, movement_manager)
 
 combat = Combat([entity_manager.get_character()], [entity_manager.get_enemies()[0]], turn_manager)
 turn_manager.start_combat(combat)
-entity_manager.get_character().levels.add_exp(100)
+
 
 def handle_events() -> None:
     global gameActive
@@ -66,12 +70,13 @@ def handle_events() -> None:
     for event in pygame.event.get():
         entity_manager.get_character().update(event, turn_manager)
         menu.process_events(event)
+        level_up_ui.handle_event(event)
         
         if event.type == pygame.QUIT:
             gameActive = False
         
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 3:
+            if event.button == 3 and not entity_manager.get_character().input_handler.dragging:
                 menu.open_at(event.pos)
             elif event.button == 1:
                 menu.close()
@@ -84,6 +89,9 @@ def handle_events() -> None:
             for enemy in entity_manager.get_enemies():
                 enemy.update_size(grid)
                 enemy.movement.set_position(*enemy.grid_position)
+        if event.type == pygame.KEYUP and event.key == pygame.K_1:
+            entity_manager.get_character().levels.add_exp(300)
+            
                       
 
 def draw() -> None:
@@ -95,6 +103,7 @@ def draw() -> None:
 
     menu.draw(gameScreen)
     turn_info.draw()
+    level_up_ui.draw()
     console.draw(gameScreen)
     pygame.display.flip()
 
