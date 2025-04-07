@@ -1,5 +1,4 @@
-from optparse import Option
-from typing import Callable, Optional, TYPE_CHECKING
+from typing import Callable, List, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from entities.entity import Entity
@@ -9,14 +8,16 @@ class Feat():
         self, 
         name: str, 
         description: str, 
-        is_passive: bool, 
+        is_passive: bool,
+        required_args: Optional[List[str]] = None, 
         on_apply: Optional[Callable[["Entity"], None]] = None, 
-        on_execute: Optional[Callable[..., bool]] = None
+        on_execute: Optional[Callable[..., bool]] = None,
     ) -> None:
         
         self.name = name
         self.description = description
         self.is_passive = is_passive
+        self.required_args = required_args
         self.on_apply = on_apply
         self.on_execute = on_execute
 
@@ -24,10 +25,15 @@ class Feat():
         if self.is_passive and self.on_apply:
             self.on_apply(character)
 
-    def execute(self, character: "Entity", target: Optional["Entity"] = None, **kwargs) -> bool:
+    def execute(self, **kwargs) -> bool:
         if not self.on_execute:
             return False
-        return self.on_execute(character, target, **kwargs)
+        
+        missing = [arg for arg in self.required_args if arg not in kwargs]
+        if missing:
+            raise ValueError(f"missing required args: {missing}")
+        
+        return self.on_execute(**kwargs)
 
     def __str__(self):
         return f"{self.name}: {self.description}"

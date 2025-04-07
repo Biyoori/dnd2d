@@ -29,11 +29,12 @@ class TalonsFeat(Feat):
             name="Talons", 
             description="Your talons are natural weapons...", 
             is_passive=False, 
+            required_args=["character", "grid", "entities"],
             on_execute=self.execute_talons
         )
 
     @classmethod
-    def execute_talons(cls, character: "Entity", target: Optional["Entity"] = None, grid: "Grid" = None, entities: List["Entity"] = None, **__) -> bool:
+    def execute_talons(cls, character: "Entity", grid: "Grid", entities: List["Entity"], **__) -> bool:
         if not entities:
             return False
 

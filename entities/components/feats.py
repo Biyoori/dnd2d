@@ -33,3 +33,9 @@ class FeatSystem:
             return feat.execute(self.owner, target, **kwargs)
         
         return False
+    
+    def get_feats(self) -> Dict[str, Feat]:
+        return self._feats.available_feats.copy()
+    
+    def get_active(self) -> List[str]:
+        return self._feats.active_feats.copy()

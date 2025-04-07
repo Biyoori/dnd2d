@@ -15,7 +15,9 @@ class EntityRenderer:
         self.grid = grid
 
     def draw(self, surface: pygame.Surface) -> None:
-        pygame.draw.rect(surface, self.entity.color, (*self.entity.position, self.entity.size, self.entity.size))
+        entity_surface = pygame.Surface((self.entity.size, self.entity.size), pygame.SRCALPHA)
+        pygame.draw.rect(entity_surface, self.entity.color, (0, 0, self.entity.size, self.entity.size))
+        surface.blit(entity_surface, self.entity.position)
 
         if self.grid.navigation_path:
             movement_ft = (len(self.grid.navigation_path) - 1) * self.FEET_PER_STEP

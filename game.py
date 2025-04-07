@@ -6,6 +6,7 @@ from combat.combat import Combat
 from combat.turn_manager import TurnManager
 from movement.movement_manager import MovementManager
 from factories.enemy_factory import EnemyFactory
+from ui.feat_menu_manager import FeatMenuManager
 from ui.character_creator.character_creator import CharacterCreator
 from ui.game_console import console
 from ui.radial_menu.radial_menu import RadialMenu
@@ -16,6 +17,8 @@ from entity_manager import GameEntityManager
 pygame.init()
 
 gameScreen = pygame.display.set_mode((screen_width, screen_height))
+game_layer = pygame.Surface((screen_width, screen_height))
+character_layer = pygame.Surface((screen_width, screen_height), pygame.SRCALPHA)
 clock = pygame.time.Clock()
 
 text_renderer.init(font_size=40)
@@ -26,6 +29,7 @@ movement_manager = MovementManager()
 turn_manager = TurnManager(movement_manager)
 entity_manager = GameEntityManager()
 turn_info = TurnInfo(turn_manager, gameScreen)
+feat_menu_manager = FeatMenuManager(gameScreen)
 
 grid = Grid()
 
@@ -36,7 +40,7 @@ entity_manager.add_enemy(enemy_factory.create_enemy(grid, "skeleton"))
 entity_manager.get_character().inventory.add_item(Weapon("Axe", "", 1, 1, "", "2d4", "Slashing"))
 entity_manager.get_character().weapon_system.equip_weapon("Axe")
 
-menu = RadialMenu(entity_manager, grid)
+menu = RadialMenu(entity_manager, grid, feat_menu_manager)
 menu.enable_all_sectors(False)
 menu.enable_sector("Attack")
 menu.enable_sector("Abilities")
@@ -60,33 +64,39 @@ def handle_events() -> None:
 
     for event in pygame.event.get():
         entity_manager.get_character().update(event, turn_manager)
-        menu.process_events(event)  
+        menu.process_events(event)
+        
 
         if event.type == pygame.QUIT:
             gameActive = False
+        
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 3:
                 menu.open_at(event.pos)
             elif event.button == 1:
-                 menu.close()
-                 if entity_manager.get_character().targeting.target_selection:
-                      entity_manager.get_character().targeting.handle_target_selection(event.pos, grid, entity_manager.get_character().attacking, entity_manager.get_character(), turn_manager)
-            
+                menu.close()
+                if entity_manager.get_character().targeting.target_selection:
+                    entity_manager.get_character().targeting.handle_target_selection(event.pos, grid, entity_manager.get_character().attacking, entity_manager.get_character(), turn_manager)
+                    
                       
 
 def draw() -> None:
     gameScreen.fill(get_color("black"))
     grid.draw(gameScreen)
+    
     entity_manager.get_character().draw(gameScreen)
     entity_manager.get_enemies()[0].draw(gameScreen)
+
     menu.draw(gameScreen)
     turn_info.draw()
     console.draw(gameScreen)
     pygame.display.flip()
 
 while gameActive:
-    handle_events()
+    
     draw()
+    handle_events()
     clock.tick(framerate)
 
 pygame.quit()

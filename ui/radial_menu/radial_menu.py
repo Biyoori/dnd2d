@@ -10,10 +10,11 @@ import pygame
 
 if TYPE_CHECKING:
     from core.grid import Grid
+    from ui.feat_menu_manager import FeatMenuManager
 
 
 class RadialMenu:
-    def __init__(self, entity_manager: GameEntityManager, grid: "Grid") -> None:
+    def __init__(self, entity_manager: GameEntityManager, grid: "Grid", feat_menu_manager: "FeatMenuManager") -> None:
         self.active: bool = False
         self.radius: int = 60  
 
@@ -21,7 +22,7 @@ class RadialMenu:
         self.renderer = MenuRenderer()
         self.factory = SectorFactory(self.renderer.font)
         
-        self.actions = Actions(entity_manager, grid)
+        self.actions = Actions(entity_manager, grid, feat_menu_manager)
             
         images = self.renderer.load_images()
         self.sectors = self._create_sectors(*images)
