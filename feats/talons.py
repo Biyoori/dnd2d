@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from feat import Feat
+import feat
 from items.weapon import Weapon
 from typing import TYPE_CHECKING, ClassVar, List, Optional
 from ui.game_console import console
@@ -28,7 +29,8 @@ class TalonsFeat(Feat):
         super().__init__(
             name="Talons", 
             description="Your talons are natural weapons...", 
-            is_passive=False, 
+            is_passive=False,
+            feat_type="racial",
             required_args=["character", "grid", "entities"],
             on_execute=self.execute_talons
         )

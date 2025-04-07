@@ -11,6 +11,14 @@ SKILL_PROFICIENCIES = [
     "Survival"
 ]
 
+FEATS_BY_LEVEL = {
+    1: [],
+    2: [],
+    3: [],
+    4: []
+    #...
+}
+
 class Fighter(CharacterClass):
     def __init__(self) -> None:
-        super().__init__("Fighter", 10, ["Strength", "Constitution"], SKILL_PROFICIENCIES, 2)
+        super().__init__("Fighter", 10, ["Strength", "Constitution"], SKILL_PROFICIENCIES, 2, FEATS_BY_LEVEL)

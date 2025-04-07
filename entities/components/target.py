@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING, List, Tuple
+from ui.game_console import console
 import pygame
 
 if TYPE_CHECKING:
@@ -21,6 +22,8 @@ class TargetingSystem:
         for enemy in self.faction_system.get_enemies(entities, attacker.faction):
             if self._is_in_range(attacker, enemy, attacker.weapon_system.get_equipped_weapon().range//5):
                 self.current_valid_targets.append(enemy)
+        if len(self.current_valid_targets) == 0:
+            console.log("Found no available targets.")
         grid.update_enemy_positions(self.current_valid_targets)
         self.target_selection = True
         return self.current_valid_targets

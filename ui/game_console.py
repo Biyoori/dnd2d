@@ -1,10 +1,10 @@
 import pygame
-
+from settings import screen_width
 pygame.font.init()
 
 class GameConsole:
     def __init__(self, width, height, font_size=20, max_lines=5, bg_alpha=180) -> None:
-        self.width = width
+        self.width = screen_width
         self.height= height
         self.font_size = font_size
         self.max_lines = max_lines
@@ -28,6 +28,6 @@ class GameConsole:
             text_surface = self.font.render(message, True, self.text_color)
             self.console_surface.blit(text_surface, (10, y))
             y += self.font_size+10
-        screen.blit(self.console_surface, (0, self.height))
+        screen.blit(self.console_surface, (0, self.height + 60))
 
 console = GameConsole(800, 500)

@@ -66,3 +66,6 @@ class Entity:
 
     def draw(self, surface: pygame.Surface) -> None:
         self.renderer.draw(surface)
+
+    def update_size(self, grid) -> None:
+        self._size = grid.cell_size // 2

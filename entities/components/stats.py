@@ -8,6 +8,7 @@ from utils.utils import load_json
 
 if TYPE_CHECKING:
     from items.weapon import Weapon
+    from characters.classes.characterClass import CharacterClass
 
 _CONFIG_PATH = "entities/character/stats_config.json"
 
@@ -94,3 +95,9 @@ class StatsSystem:
 
         dice_roll = sum(random.randint(1, dice_sides) for _ in range(num_dice))
         return dice_roll + modifier
+    
+    def get_mod(self, ability: str) -> int:
+        return (getattr(self._abilities, ability) - 10) // 2
+    
+    def stats_increase_on_level_up(self, level: int, character_class: "CharacterClass", feats: List[str]):
+        self.proficiency_bonus = 2 + (level - 1) // 4

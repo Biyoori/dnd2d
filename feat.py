@@ -9,6 +9,8 @@ class Feat():
         name: str, 
         description: str, 
         is_passive: bool,
+        feat_type: str, #general, class_specific
+        required_class: Optional[str] = None,
         required_args: Optional[List[str]] = None, 
         on_apply: Optional[Callable[["Entity"], None]] = None, 
         on_execute: Optional[Callable[..., bool]] = None,
@@ -17,6 +19,8 @@ class Feat():
         self.name = name
         self.description = description
         self.is_passive = is_passive
+        self.feat_type = feat_type
+        self.required_class = required_class
         self.required_args = required_args
         self.on_apply = on_apply
         self.on_execute = on_execute
@@ -35,5 +39,5 @@ class Feat():
         
         return self.on_execute(**kwargs)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name}: {self.description}"

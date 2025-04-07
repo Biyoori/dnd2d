@@ -53,11 +53,12 @@ print(entity_manager.get_character().race)
 gameActive = True
 
 
-entity_manager.get_enemies()[0].initialize(4,4,grid,movement_manager)
+entity_manager.get_enemies()[0].initialize(10,8,grid,movement_manager)
 entity_manager.get_character().initialize(1, 1, grid, movement_manager)
 
 combat = Combat([entity_manager.get_character()], [entity_manager.get_enemies()[0]], turn_manager)
 turn_manager.start_combat(combat)
+entity_manager.get_character().levels.add_exp(100)
 
 def handle_events() -> None:
     global gameActive
@@ -66,11 +67,9 @@ def handle_events() -> None:
         entity_manager.get_character().update(event, turn_manager)
         menu.process_events(event)
         
-
         if event.type == pygame.QUIT:
             gameActive = False
         
-
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 3:
                 menu.open_at(event.pos)
@@ -78,7 +77,13 @@ def handle_events() -> None:
                 menu.close()
                 if entity_manager.get_character().targeting.target_selection:
                     entity_manager.get_character().targeting.handle_target_selection(event.pos, grid, entity_manager.get_character().attacking, entity_manager.get_character(), turn_manager)
-                    
+        if event.type == pygame.MOUSEWHEEL:
+            grid._cell_size += event.y
+            entity_manager.get_character().update_size(grid)
+            entity_manager.get_character().movement.set_position(*entity_manager.get_character().grid_position)
+            for enemy in entity_manager.get_enemies():
+                enemy.update_size(grid)
+                enemy.movement.set_position(*enemy.grid_position)
                       
 
 def draw() -> None:

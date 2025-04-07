@@ -1,11 +1,13 @@
 from dataclasses import dataclass, field
 from typing import Dict, List, TYPE_CHECKING, Optional
 from feat import Feat
+from core.feat_loader import get_feat
 
 if TYPE_CHECKING:
     from entities.entity import Entity
+    from characters.classes.characterClass import CharacterClass
 
-@dataclass(frozen=True)
+@dataclass
 class FeatsData:
     available_feats: Dict[str, "Feat"] = field(default_factory=dict)
     active_feats: List[str] = field(default_factory=set)
@@ -39,3 +41,7 @@ class FeatSystem:
     
     def get_active(self) -> List[str]:
         return self._feats.active_feats.copy()
+    
+    def add_feats_on_level_up(self, level: int, character_class: "CharacterClass", feats: List[str]) -> None:
+        for feat in feats:
+            self.add_feat(get_feat(feat))

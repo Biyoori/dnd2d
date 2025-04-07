@@ -4,6 +4,7 @@ from entities.components.factions import Faction, FactionSystem
 from entities.components.feats import FeatSystem, FeatsData
 from entities.components.health import HealthData, HealthSystem
 from entities.components.inventory import InventoryData, InventorySystem
+from entities.components.leveling import LevelingData, LevelingSystem
 from entities.components.stats import AbilityScores, Proficiencies, StatsSystem
 from entities.components.target import TargetingSystem
 from entities.components.weapons import WeaponSystem
@@ -28,17 +29,17 @@ class Character(Entity):
         ) -> None: 
         super().__init__(get_color("red"), race.walking_speed, Faction.PLAYER)
         self.name = name
-        self.experience = 0      
+           
         self.armor_class = 10
         self.race = race
 
-        # Character Classes
-        self.primary_class = character_classes
-        self.character_classes = {character_classes: 1}
+        # Character Classes and Leveling
+        level_data = LevelingData(character_classes, 0, {character_classes: 1})
+        self.levels = LevelingSystem(level_data)
 
         # Stats
         abilities = AbilityScores(*[score for score in ability_scores.values()])
-        proficiencies = Proficiencies(skill_proficiencies, self.primary_class.saving_throws)
+        proficiencies = Proficiencies(skill_proficiencies, self.levels.get_primary_class().saving_throws)
         self.stats = StatsSystem(abilities, proficiencies, self.get_proficiency_bonus())
 
         #Inventory
@@ -54,7 +55,7 @@ class Character(Entity):
         self.attacking = AttackSystem()
         
         # Hit Points
-        hp = HealthCalculator.calc_character(self.character_classes, self.stats)
+        hp = HealthCalculator.calc_character(self.levels.get_classes(), self.stats)
         health_data = HealthData(hp, hp)
         self.health = HealthSystem(health_data, self)
 
@@ -62,9 +63,14 @@ class Character(Entity):
         self.feats = FeatSystem(self, FeatsData())
         for feat in self.load_feats():
             self.feats.add_feat(feat)
+
+        #Level up subscribtions
+        self.levels.on_level_up.subscribe(self.health.increase_health_on_level_up)
+        self.levels.on_level_up.subscribe(self.feats.add_feats_on_level_up)
+        self.levels.on_level_up.subscribe(self.stats.stats_increase_on_level_up)
     
     def get_proficiency_bonus(self) -> int:
-        level = sum(lvl for lvl in self.character_classes.values())
+        level = sum(lvl for lvl in self.levels.get_classes().values())
         return 2 + (level - 1) // 4
     
     def load_feats(self) -> list:
@@ -78,5 +84,5 @@ class Character(Entity):
 
     def display_character_info(self) -> None:
         print(f"{self.name}, {self.race.name}")
-        print("Classes:", {cls.name: lvl for cls, lvl in self.character_classes.items()})
+        print("Classes:", {cls.name: lvl for cls, lvl in self.levels.get_classes().items()})
         print("Skills:", self.stats._proficiencies.skills)

@@ -1,9 +1,11 @@
+from math import ceil
 from typing import Set, List, TYPE_CHECKING
 from dataclasses import dataclass
 from ui.game_console import console
 
 if TYPE_CHECKING:
     from entities.entity import Entity
+    from characters.classes.characterClass import CharacterClass
 
 @dataclass(frozen=True)
 class HealthData:
@@ -67,3 +69,15 @@ class HealthSystem:
     
     def set_status(self, status: StatusEffect) -> None:
         self._status_effects.append(status)
+
+    def increase_health_on_level_up(self, level: int, character_class: "CharacterClass", feats: List[str]) -> None:
+        new_max_hp: int = ceil(character_class.hit_die/2) + self._entity.stats.get_mod("CON")
+
+        self._data = HealthData(
+            max_hp=new_max_hp,
+            current_hp=min(self._data.current_hp + new_max_hp, new_max_hp),
+            is_alive=self._data.current_hp>0,
+            resistances=self._data.resistances,
+            immunities=self._data.immunities,
+            vulnerabilities=self._data.vulnerabilities
+        )

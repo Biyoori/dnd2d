@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from entities.enemy import Enemy
 
 class Grid:
-    def __init__(self, size: int = 10, cell_size: int = 64) -> None:
+    def __init__(self, size: int = 20, cell_size: int = 64) -> None:
         self._cell_size = cell_size
         self._grid_width = size
         self._grid_height = size

@@ -7,5 +7,6 @@ flight = Feat(
     name="Flight",
     description="You have a flying speed of 50 feet. To use this speed, you can't be wearing medium or heavy armor.",
     is_passive=True,
+    feat_type="racial",
     on_apply=apply_flight
 )
