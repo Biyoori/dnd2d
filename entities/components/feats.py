@@ -42,6 +42,12 @@ class FeatSystem:
     def get_active(self) -> List[str]:
         return self._feats.active_feats.copy()
     
+    def get_passive(self) -> List[str]:
+        return self._feats.passive_feats.copy()
+    
+    def has_feat(self, feat_name: str) -> bool:
+        return feat_name in self._feats.available_feats
+    
     def add_feats_on_level_up(self, level: int, character_class: "CharacterClass", feats: List[str]) -> None:
         for feat in feats:
             self.add_feat(get_feat(feat))

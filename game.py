@@ -90,9 +90,9 @@ def handle_events() -> None:
                 enemy.update_size(grid)
                 enemy.movement.set_position(*enemy.grid_position)
         if event.type == pygame.KEYUP and event.key == pygame.K_1:
+            print(entity_manager.get_character().armor_class.get_armor_class())
             entity_manager.get_character().levels.add_exp(300)
             
-                      
 
 def draw() -> None:
     gameScreen.fill(get_color("black"))

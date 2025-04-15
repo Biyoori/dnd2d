@@ -1,5 +1,7 @@
 from core.event import Event
 from core.feat_loader import get_feat
+from entities.components.armor_class import ArmorClass
+from entities.components.armors import ArmorSystem
 from entities.components.attack import AttackSystem
 from entities.components.factions import Faction, FactionSystem
 from entities.components.feats import FeatSystem, FeatsData
@@ -9,6 +11,7 @@ from entities.components.leveling import LevelingData, LevelingSystem
 from entities.components.stats import AbilityScores, Proficiencies, StatsSystem
 from entities.components.target import TargetingSystem
 from entities.components.weapons import WeaponSystem
+from items.armor import Armor
 from settings import get_color
 from entities.entity import Entity
 from health_calculator import HealthCalculator
@@ -30,8 +33,7 @@ class Character(Entity):
         ) -> None: 
         super().__init__(get_color("red"), race.walking_speed, Faction.PLAYER)
         self.name = name
-           
-        self.armor_class = 10
+
         self.race = race
 
         # Character Classes and Leveling
@@ -50,6 +52,9 @@ class Character(Entity):
         #Weapon System
         self.weapon_system = WeaponSystem(self.inventory)
 
+        # Armor System
+        self.armor_system = ArmorSystem(self.inventory)
+
         #Attacking and Targeting
         factions = FactionSystem()
         self.targeting = TargetingSystem(factions)
@@ -66,6 +71,10 @@ class Character(Entity):
             self.feats.add_feat(feat)
         for feat in self.levels.get_primary_class().feats_by_level[1]:
             self.feats.add_feat(get_feat(feat))
+
+        # Armor Class
+        self.armor_class = ArmorClass()
+        self.armor_class.calculate_ac(self.armor_system, self.stats, self.feats)
 
         #Level up subscribtions
         Event.subscribe("level_up", self.health.increase_health_on_level_up)
