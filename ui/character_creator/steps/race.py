@@ -1,7 +1,8 @@
 import pygame
+
+from ui.character_creator.steps.items import ItemStep
 from .creation_step import CreationStep
 from ..data.races import get_races
-from .abilities import AbilityStep
 from ui.utils.text_renderer import draw_text
 from typing import TYPE_CHECKING
 
@@ -28,4 +29,4 @@ class RaceStep(CreationStep):
                 self.selected_index = (self.selected_index - 1) % len(self.races)
             elif event.key == pygame.K_RETURN:
                 self.creator.character_race = self.races[self.selected_index]
-                self.creator.set_step(AbilityStep)
+                self.creator.set_step(ItemStep)

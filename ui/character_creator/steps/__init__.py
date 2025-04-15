@@ -4,3 +4,4 @@ from .class_ import ClassStep
 from .race import RaceStep
 from .abilities import AbilityStep
 from .skills import SkillStep
+from .items import ItemStep

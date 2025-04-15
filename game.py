@@ -41,9 +41,6 @@ grid = Grid()
 entity_manager.add_character(character_creator.run())
 entity_manager.add_enemy(enemy_factory.create_enemy(grid, "skeleton"))
 
-entity_manager.get_character().inventory.add_item(Weapon("Axe", "", 1, 1, "", "2d4", "Slashing"))
-entity_manager.get_character().weapon_system.equip_weapon("Axe")
-
 menu = RadialMenu(entity_manager, grid, feat_menu_manager)
 menu.enable_all_sectors(False)
 menu.enable_sector("Attack")

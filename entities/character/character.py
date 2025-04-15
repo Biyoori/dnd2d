@@ -1,3 +1,4 @@
+from tracemalloc import start
 from core.event import Event
 from core.feat_loader import get_feat
 from entities.components.armor_class import ArmorClass
@@ -11,6 +12,7 @@ from entities.components.leveling import LevelingData, LevelingSystem
 from entities.components.stats import AbilityScores, Proficiencies, StatsSystem
 from entities.components.target import TargetingSystem
 from entities.components.weapons import WeaponSystem
+from factories.item_factory import ItemFactory
 from items.armor import Armor
 from settings import get_color
 from entities.entity import Entity
@@ -29,7 +31,8 @@ class Character(Entity):
             character_classes: "CharacterClass", 
             race: "Race", 
             ability_scores: dict[str,int],
-            skill_proficiencies: list[str]
+            skill_proficiencies: list[str],
+            starting_gear: list[list[str]]
         ) -> None: 
         super().__init__(get_color("red"), race.walking_speed, Faction.PLAYER)
         self.name = name
@@ -46,7 +49,11 @@ class Character(Entity):
         self.stats = StatsSystem(abilities, proficiencies, self.get_proficiency_bonus())
 
         #Inventory
-        inventory_data = InventoryData([])
+        starting_gear = []
+        for item_list in starting_gear:
+            for item in item_list:
+                starting_gear.append(ItemFactory.create(item))
+        inventory_data = InventoryData([starting_gear])
         self.inventory = InventorySystem(inventory_data)
 
         #Weapon System

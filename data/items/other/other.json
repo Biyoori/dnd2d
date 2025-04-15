@@ -1,0 +1,12 @@
+{
+    "Explorer's Pack": {
+        "type": "adventuring_gear",
+        "weight": 5,
+        "cost": 10,
+        "consumable": false,
+        "container": false,
+        "capacity": 30,
+        "description": "A backpack containing a bedroll, a mess kit, a tinderbox, 10 torches, 10 days of rations, and a waterskin.",
+        "contents": [["Bedroll", 1], ["Mess Kit", 1], ["Tinderbox", 1], ["Torch", 10], ["Rations", 10], ["Waterskin", 1]]
+    }
+}

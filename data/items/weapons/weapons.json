@@ -1,0 +1,25 @@
+{
+    "Handaxe": {
+        "type": "weapon",
+	    "weapon_type": "Simple Weapon",
+        "damage": "1d6",
+        "damage_type": "Slashing",
+	    "finesse": false,
+        "properties": ["Light", "Thrown"],
+	    "range": 5,
+        "weight": 2,
+        "value": 5,
+        "description": "A handaxe is a small axe that can be used with one hand. It is often used by woodsmen and hunters."
+    },
+    "Great Axe": {
+        "type": "weapon",
+        "weapon_type": "Martial Weapon",
+        "damage": "1d12",
+        "damage_type": "Slashing",
+        "finesse": false,
+        "properties": ["Heavy", "Two-Handed"],
+        "weight": 7,
+        "value": 30,
+        "description": "A great axe is a large, heavy axe that is designed for use with two hands. It is often used by warriors and barbarians."
+    }
+}

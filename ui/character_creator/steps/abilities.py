@@ -6,8 +6,6 @@ from ..data.abilities import ABILITY_NAMES, create_default_scores
 from .skills import SkillStep
 from typing import TYPE_CHECKING
 
-from ui.character_creator.data import abilities
-
 if TYPE_CHECKING:
     from ..character_creator import CharacterCreator
 

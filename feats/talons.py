@@ -20,6 +20,7 @@ class TalonsWeapon(Weapon):
             weapon_type="Unarmed", 
             damage="1d6", 
             damage_type="Slashing",
+            properties=["Natural"],
         )
 
 class TalonsFeat(Feat):

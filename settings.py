@@ -12,7 +12,8 @@ COLOR_PALETTE = {
     "green": (135, 197, 95, 255),
     "light-gray": (200,200,200),
     "dark-gray": (26,26,26,217),
-    "gold": (224, 214, 181)
+    "gold": (224, 214, 181),
+    "yellow": (255, 255, 0)
 }
 
 def get_color(color) -> tuple[int, int, int]:
