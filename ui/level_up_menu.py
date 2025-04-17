@@ -14,9 +14,9 @@ class ClassSelectionUI:
         self.popup_rect = pygame.Rect(50, 50, 250, 200)
 
         self.buttons = []
-        for i, cls in enumerate(self.classes):
+        for i, cls_ in enumerate(self.classes):
             rect = pygame.Rect(70, 80 + i * 50, 200, 40)
-            self.buttons.append((rect, cls))
+            self.buttons.append((rect, cls_))
 
         Event.subscribe("show_class_selection_ui", self.show)
 
@@ -41,8 +41,8 @@ class ClassSelectionUI:
             return
         
         if event.type == pygame.MOUSEBUTTONDOWN:
-            for rect, cls in self.buttons:
+            for rect, cls_ in self.buttons:
                 if rect.collidepoint(event.pos):
-                    self.selected_class = cls
+                    self.selected_class = cls_
                     self.active = False
-                    Event.notify("class_selected", cls)
+                    Event.notify("class_selected", cls_)

@@ -11,7 +11,7 @@
         "value": 5,
         "description": "A handaxe is a small axe that can be used with one hand. It is often used by woodsmen and hunters."
     },
-    "Great Axe": {
+    "Greataxe": {
         "type": "weapon",
         "weapon_type": "Martial Weapon",
         "damage": "1d12",

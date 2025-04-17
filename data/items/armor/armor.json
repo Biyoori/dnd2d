@@ -1,0 +1,12 @@
+{
+    "Leather Armor": {
+        "id": "leather_armor",
+        "type": "armor",
+        "material": "leather",
+        "defense": 2,
+        "durability": 50,
+        "enchantable": true,
+        "description": "Lightweight armor made from leather.",
+        "icon": "leather_armor_icon.png"
+    }
+}

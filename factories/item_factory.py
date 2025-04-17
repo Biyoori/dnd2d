@@ -10,10 +10,10 @@ class ItemFactory:
     _cache = {}
     
     _item_files = {
-        "weapons": "items/weapons.json",
-        "armors": "items/armors.json",
-        "potions": "items/potions.json",
-        "adventuring_gear": "items/adventuring_gear.json"
+        "weapons": "data/items/weapons/weapons.json",
+        "armors": "data/items/armor/armor.json",
+        "potions": "data/items/potions/potions.json",
+        "adventuring_gear": "data/items/other/other.json"
     }
 
     @staticmethod
@@ -36,7 +36,7 @@ class ItemFactory:
         raise ValueError(f"Item '{name}' not found in any item type")
 
     @staticmethod
-    def _build_item(self, name: str, data: dict) -> Weapon | Armor | Potion | AdventuringGear:
+    def _build_item(name: str, data: dict) -> Weapon | Armor | Potion | AdventuringGear:
         type_ = data.get("type")
         if type_ == 'weapon':
             return Weapon(

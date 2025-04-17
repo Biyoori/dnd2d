@@ -49,11 +49,11 @@ class Character(Entity):
         self.stats = StatsSystem(abilities, proficiencies, self.get_proficiency_bonus())
 
         #Inventory
-        starting_gear = []
+        starting_inventory = []
         for item_list in starting_gear:
             for item in item_list:
-                starting_gear.append(ItemFactory.create(item))
-        inventory_data = InventoryData([starting_gear])
+                starting_inventory.append(ItemFactory.create(item))
+        inventory_data = InventoryData(starting_inventory)
         self.inventory = InventorySystem(inventory_data)
 
         #Weapon System

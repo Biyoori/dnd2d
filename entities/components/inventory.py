@@ -45,3 +45,6 @@ class InventorySystem:
     @property
     def is_empty(self) -> bool:
         return len(self._data.items) == 0
+    
+    def get_inventory(self) -> List["Item"]:
+        return self._data.items.copy()

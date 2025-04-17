@@ -17,3 +17,7 @@ class Event:
         if event_name in cls._events:
             for callback in cls._events[event_name]:
                 callback(*args, **kwargs)
+
+    @classmethod
+    def list_events(cls) -> None:
+        return cls._events.keys()

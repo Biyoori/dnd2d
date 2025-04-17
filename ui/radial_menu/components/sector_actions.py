@@ -1,6 +1,8 @@
 from typing import TYPE_CHECKING
 import pygame
 
+from core.event import Event
+
 if TYPE_CHECKING:
     from entity_manager import GameEntityManager
     from core.grid import Grid
@@ -35,3 +37,13 @@ class Actions:
                 selected_feat.execute(**args)
             except ValueError as e:
                 print(f"Feat execution failed: {e}")
+
+    def inventory(self) -> None:
+        player = self.entity_manager.get_character()
+
+        Event.notify("open_inventory", player)
+
+        
+
+
+        

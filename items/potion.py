@@ -2,7 +2,7 @@ from items.item import Item
 
 class Potion(Item):
     def __init__(self, name: str, description: str, weight: float, value: int, effect: str, potency: int) -> None:
-        super().__init__(name, description, weight, value, consumable=True)
+        super().__init__(name, description, "potion", weight, value, consumable=True)
         self.effect = effect
         self.potency = potency
 

@@ -1,3 +1,4 @@
+from core.event import Event
 from entities.components.factions import FactionSystem
 from items.weapon import Weapon
 from settings import *
@@ -6,6 +7,7 @@ from combat.combat import Combat
 from combat.turn_manager import TurnManager
 from movement.movement_manager import MovementManager
 from factories.enemy_factory import EnemyFactory
+from ui.inventory_menu import InventoryMenu
 from ui.feat_menu_manager import FeatMenuManager
 from ui.character_creator.character_creator import CharacterCreator
 from ui.game_console import console
@@ -34,6 +36,7 @@ entity_manager = GameEntityManager()
 turn_info = TurnInfo(turn_manager, gameScreen)
 feat_menu_manager = FeatMenuManager(gameScreen)
 level_up_ui = ClassSelectionUI(gameScreen, font)
+inventory_menu = InventoryMenu(font, gameScreen)
 
 grid = Grid()
 
@@ -45,6 +48,7 @@ menu = RadialMenu(entity_manager, grid, feat_menu_manager)
 menu.enable_all_sectors(False)
 menu.enable_sector("Attack")
 menu.enable_sector("Abilities")
+menu.enable_sector("Items")
 
 
 print(f"Created: ")
@@ -59,6 +63,7 @@ entity_manager.get_character().initialize(1, 1, grid, movement_manager)
 
 combat = Combat([entity_manager.get_character()], [entity_manager.get_enemies()[0]], turn_manager)
 turn_manager.start_combat(combat)
+print(Event.list_events())
 
 
 def handle_events() -> None:
@@ -68,6 +73,7 @@ def handle_events() -> None:
         entity_manager.get_character().update(event, turn_manager)
         menu.process_events(event)
         level_up_ui.handle_event(event)
+        inventory_menu.handle_event(event)
         
         if event.type == pygame.QUIT:
             gameActive = False
@@ -102,6 +108,7 @@ def draw() -> None:
     turn_info.draw()
     level_up_ui.draw()
     console.draw(gameScreen)
+    inventory_menu.draw_menu()
     pygame.display.flip()
 
 while gameActive:

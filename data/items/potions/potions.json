@@ -1,0 +1,8 @@
+{
+    "Healing Potion": {
+        "type": "healing",
+        "effect": "restores 50 HP",
+        "duration": "instant",
+        "description": "A potion that restores a small amount of health."
+    }
+}

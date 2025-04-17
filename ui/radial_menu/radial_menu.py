@@ -34,7 +34,7 @@ class RadialMenu:
             ("Magic", self.actions.attack),
             ("Flee", self.actions.attack),
             ("Abilities", self.actions.abilities),
-            ("Items", self.actions.attack),
+            ("Items", self.actions.inventory),
             ("Help", self.actions.attack)
         ]
 

@@ -2,7 +2,7 @@
     "Explorer's Pack": {
         "type": "adventuring_gear",
         "weight": 5,
-        "cost": 10,
+        "value": 10,
         "consumable": false,
         "container": false,
         "capacity": 30,
