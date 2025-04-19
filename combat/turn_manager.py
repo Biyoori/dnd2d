@@ -1,3 +1,4 @@
+from core.event import Event
 from entities.enemy import Enemy
 from typing import TYPE_CHECKING
 from ui.game_console import console
@@ -15,6 +16,9 @@ class TurnManager:
         self.movement_manager = movement_manager
         self.actions_remaining = 0
         self.bonus_action_used = False
+
+        Event.subscribe("use_action", self.use_action)
+        Event.subscribe("use_bonus_action", self.use_bonus_action)
 
     def start_combat(self, combat: "Combat") -> None:
         self.combat = combat

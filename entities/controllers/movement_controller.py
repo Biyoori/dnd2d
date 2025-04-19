@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from entities.entity import Entity
-    from core.grid import Grid
+    from core.grid.grid import Grid
     from movement.movement_manager import MovementManager
     from entities.controllers.entity_pathfinder import EntityPathfinder
     from combat.turn_manager import TurnManager
@@ -21,32 +21,41 @@ class EntityMovement:
         self.movement_used = 0
 
     def update_movement(self, new_x: int, new_y: int) -> None:
-        new_path = self.pathfinder.calculate_path(new_x, new_y)
-
-        if self.movement_manager.can_move(self.entity, len(self.pathfinder.temp_path) + len(new_path) - 1):
-            self.grid.navigation_path = self.pathfinder.temp_path + new_path
-
+        self.pathfinder.calculate_path(new_x, new_y)
+        
     def finalize_movement(self, turn_manager: "TurnManager") -> None:
-        if self.snap_to_grid():
-            self.movement_manager.register_movement(self.entity, len(self.grid.navigation_path) - 1, turn_manager)
+        combined_path = self.pathfinder.navigation_path + [step for step in self.pathfinder._temp_path if step not in self.pathfinder.navigation_path]
+        print(f"[DEBUG] Final path: {combined_path}")
+        if not combined_path:
+            print("[DEBUG] No path found.")
+            return
+        if self.snap_to_grid(combined_path):
+            tiles_moved = len(combined_path) - 1
+            self.movement_manager.register_movement(self.entity, tiles_moved, turn_manager)
         self.pathfinder.clear_path()
 
-    def snap_to_grid(self) -> bool:
-        if self.is_out_of_path():
-            self.set_position(self.grid.navigation_path[0][0], self.grid.navigation_path[0][1])
+    def snap_to_grid(self, combined_path) -> bool:
+        if self.is_out_of_path(combined_path):
+            self.set_position(combined_path[0][0], combined_path[0][1])
             return False
         else:
-            last_x, last_y = self.grid.navigation_path[-1]
+            last_x, last_y = combined_path[-1]
+            total_path_length = len(combined_path) - 1
+            if not self.movement_manager.can_move(self.entity, total_path_length):
+                self.set_position(combined_path[0][0], combined_path[0][1])
+                print("[DEBUG] Movement limit exceeded.")
+                return False
             self.set_position(last_x, last_y)
+            print(f"[DEBUG] Moved to position: {last_x}, {last_y}")
             return True
 
-    def is_out_of_path(self) -> bool:
-        if not self.grid.navigation_path:
+    def is_out_of_path(self, combined_path) -> bool:
+        if not self.pathfinder.navigation_path:
             return False
         
         current_x = floor(self.entity.position.x / self.grid.cell_size)
         current_y = floor(self.entity.position.y / self.grid.cell_size)
-        path_start_x, path_start_y = self.grid.navigation_path[0]
+        path_start_x, path_start_y = combined_path[0]
 
         distance = max(abs(current_x - path_start_x), abs(current_y - path_start_y))
 
@@ -58,3 +67,4 @@ class EntityMovement:
             x * self.grid.cell_size + self.grid.cell_size / 4, 
             y * self.grid.cell_size + self.grid.cell_size / 4
         )
+        print(f"[DEBUG] Entity position set to: {self.entity.position}")

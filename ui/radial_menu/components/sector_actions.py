@@ -5,7 +5,7 @@ from core.event import Event
 
 if TYPE_CHECKING:
     from entity_manager import GameEntityManager
-    from core.grid import Grid
+    from core.grid.grid import Grid
     from ui.feat_menu_manager import FeatMenuManager
 
 class Actions:

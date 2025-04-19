@@ -16,7 +16,9 @@ class Event:
     def notify(cls, event_name, *args, **kwargs) -> None:
         if event_name in cls._events:
             for callback in cls._events[event_name]:
-                callback(*args, **kwargs)
+                result = callback(*args, **kwargs)
+                print(f"Event '{event_name}' notified to {callback.__name__}. Result: {result}")
+        return result if result else None
 
     @classmethod
     def list_events(cls) -> None:

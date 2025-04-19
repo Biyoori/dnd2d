@@ -30,10 +30,10 @@ class ClassSelectionUI:
         pygame.draw.rect(self.screen, get_color("dark-gray"), self.popup_rect, border_radius=5)
         pygame.draw.rect(self.screen, get_color("gold"), self.popup_rect, 1, 3)
 
-        for rect, cls in self.buttons:
+        for rect, cls_ in self.buttons:
             pygame.draw.rect(self.screen, (50, 50, 50), rect, border_radius=5)
             pygame.draw.rect(self.screen, get_color("gold"), rect, 1, 5)
-            text = self.font.render(cls.name, True, (255, 255, 255))
+            text = self.font.render(cls_.name, True, (255, 255, 255))
             self.screen.blit(text, (rect.x + 20, rect.y + 5))
 
     def handle_event(self, event) -> None:

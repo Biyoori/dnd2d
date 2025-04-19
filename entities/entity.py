@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from entities.components.factions import Faction
 
 if TYPE_CHECKING:
-    from core.grid import Grid
+    from core.grid.grid import Grid
     from movement.movement_manager import MovementManager
     from combat.turn_manager import TurnManager
 
@@ -50,7 +50,7 @@ class Entity:
         self._size = grid.cell_size // 2
         self.set_position(grid)
 
-        self.pathfinder = EntityPathfinder(grid)
+        self.pathfinder = EntityPathfinder(self, grid, movement_manager)
         self.movement = EntityMovement(self, grid, movement_manager, self.pathfinder)
         self.input_handler = EntityInputHandler(self, grid, self.movement)
         self.renderer = EntityRenderer(self, grid)

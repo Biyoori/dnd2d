@@ -1,3 +1,4 @@
+from core.event import Event
 from entities.character.character import Character
 from entities.components.health import StatusEffect
 from feat import Feat
@@ -9,6 +10,8 @@ if TYPE_CHECKING:
 
 
 def rage_effect(character: Character) -> None:
+    if not Event.notify("use_bonus_action"):
+        return
     character.health.add_resistances(["Bludgeoning", "Piercing", "Slashing"])
     if sum(character.levels.get_classes().values()) >= 9:
         rage_bonus = 3

@@ -28,3 +28,6 @@ class ArmorClass:
     
     def get_armor_class(self) -> int:
         return self._armor_class
+    
+    def get_armor_class(self) -> int:
+        return self._armor_class

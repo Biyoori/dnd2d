@@ -130,3 +130,6 @@ class HealthSystem:
             vulnerabilities=self._data.vulnerabilities
         )
         return self._data
+    
+    def is_alive(self) -> bool:
+        return self._data.is_alive

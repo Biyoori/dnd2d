@@ -7,7 +7,7 @@ from ui.game_console import console
 
 if TYPE_CHECKING:
     from entities.entity import Entity
-    from core.grid import Grid
+    from core.grid.grid import Grid
 
 @dataclass
 class TalonsWeapon(Weapon):

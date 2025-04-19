@@ -30,7 +30,7 @@ class InventoryMenu:
 
             text_surface = self.font.render(item.name, True, (255, 255, 255))
             self.screen.blit(text_surface, (rect.x, rect.y))
-            y_offset += 30
+            y_offset += 50
 
     def handle_event(self, event: pygame.event.Event) -> None:
         if not self.active:
@@ -40,7 +40,9 @@ class InventoryMenu:
                 if rect.collidepoint(event.pos):
                     print(f"Selected item: {item.name}")
                     if item.item_type == "weapon":
-                        Event.notify("equip_weapon", item)
+                        if Event.notify("use_action"):
+                            Event.notify("equip_weapon", item)
+                            print(f"Equipped weapon: {item.name}")
                     self.close()
                     break
         if event.type == pygame.MOUSEMOTION:

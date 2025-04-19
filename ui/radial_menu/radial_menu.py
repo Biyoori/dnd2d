@@ -9,7 +9,7 @@ from typing import Tuple, List, TYPE_CHECKING
 import pygame
 
 if TYPE_CHECKING:
-    from core.grid import Grid
+    from core.grid.grid import Grid
     from ui.feat_menu_manager import FeatMenuManager
 
 

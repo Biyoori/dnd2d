@@ -2,6 +2,7 @@ import pygame
 
 screen_width, screen_height = 1280, 720
 framerate = 60
+font_path = "Assets/UI/Fonts/IM_Fell_DW_Pica/IMFellDWPica-Regular.ttf"
 
 COLOR_PALETTE = {
     "black": (0,0,0,),

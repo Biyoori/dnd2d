@@ -9,7 +9,7 @@ from ai.skeleton_ai import SkeletonAi
 from entities.entity import Entity
 
 if TYPE_CHECKING:
-    from core.grid import Grid
+    from core.grid.grid import Grid
     
 
 class Enemy(Entity):

@@ -22,8 +22,5 @@ class MovementManager:
             else:
                 self.movement_used[entity] = tiles
 
-            if self.movement_used[entity] >= entity.max_tiles and turn_manager.is_in_combat():
-                turn_manager.end_turn()
-
     def reset_all_movement(self) -> None:
         self.movement_used.clear()
