@@ -53,13 +53,17 @@ class SkeletonAi:
 
     def _move_to_target(self, target: "Entity") -> None:
         self.log_decision(f"Moving towards target at {target.grid_position}")
-        path = self.grid.pathfinding.find_path(self.entity.grid_position, target.grid_position)
+        path = self.grid.pathfinding.find_path_a_star(tuple(self.entity.grid_position), tuple(target.grid_position))
+        print("[DEBUG] Path found:", path)
+
+        if not path:
+            self.log_decision("No path found to target.")
+            return
 
         speed = self.entity.speed // 5
         steps_to_take = min(speed, len(path) - 1)
         for step in range(1, steps_to_take + 1):
             next_step = path[step]
-
             if next_step == tuple(target.grid_position):
                 print(f"Skeleton reached target at {next_step}")
                 break

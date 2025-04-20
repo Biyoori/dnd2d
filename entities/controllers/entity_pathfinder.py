@@ -67,7 +67,7 @@ class EntityPathfinder:
         ]
 
         for (x, y), can_move in zip(combined_path, can_move_results):
-            color = green if can_move else red
+            color = green if can_move and self._grid.get_cell((x,y)) == 0 else red
             pygame.draw.rect(
                 screen, 
                 color, 

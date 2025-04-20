@@ -50,7 +50,7 @@
             "damage_type": "piercing",
             "attack_bonus": 5,
             "damage_formula": "1d6+3",
-            "range": "80/320",
+            "range": "5/320",
             "code": "ranged_attack"
         }
     ],

@@ -1,3 +1,4 @@
+from operator import is_
 from core.grid.dungeon_generator import DungeonGenerator
 from core.grid.objects_manager import GridObjectsManager
 from core.grid.renderer import GridRenderer
@@ -39,6 +40,10 @@ class Grid:
         if 0 <= x < self._grid_width and 0 <= y < self._grid_height:
             return self._matrix[y][x]
         return -1
+    
+    def is_valid(self, pos: Tuple[int, int]) -> bool:
+        x, y = pos
+        return 0 <= x < self._grid_width and 0 <= y < self._grid_height and self.get_cell(pos) == 0
     
     def clear_matrix(self) -> None:
         self._matrix = [[1 for _ in range(self._grid_width)] for _ in range(self._grid_height)]
