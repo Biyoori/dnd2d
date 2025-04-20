@@ -50,7 +50,6 @@ class CharacterCreator:
         self._character_created = True
 
     def _create_character(self) -> Character:
-        print(self.starting_gear)
         if not all([self.character_name, self.character_class, self.character_race, self.ability_scores, self.skills, self.starting_gear]):
             raise ValueError("Character creation incomplete. Make sure you're not missing anything during creation.")
         return CharacterFactory.create_character(self.character_name, self.character_class, self.character_race, self.ability_scores, self.skills, self.starting_gear)

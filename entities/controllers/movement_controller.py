@@ -1,6 +1,7 @@
 import pygame
 from math import floor
 from typing import TYPE_CHECKING, List, Tuple
+from debugging import logger
 
 if TYPE_CHECKING:
     from entities.entity import Entity
@@ -25,9 +26,7 @@ class EntityMovement:
         
     def finalize_movement(self, turn_manager: "TurnManager") -> None:
         combined_path = self.pathfinder.navigation_path + [step for step in self.pathfinder._temp_path if step not in self.pathfinder.navigation_path]
-        print(f"[DEBUG] Final path: {combined_path}")
         if not combined_path:
-            print("[DEBUG] No path found.")
             return
         if self.snap_to_grid(combined_path):
             tiles_moved = len(combined_path) - 1
@@ -43,16 +42,13 @@ class EntityMovement:
             total_path_length = len(combined_path) - 1
             if not self.movement_manager.can_move(self.entity, total_path_length):
                 self.set_position(combined_path[0][0], combined_path[0][1])
-                print("[DEBUG] Movement limit exceeded.")
                 return False
             #Check if every step in the path is valid
             for step in combined_path:
                 if not self.grid.get_cell(step) == 0:
                     self.set_position(combined_path[0][0], combined_path[0][1])
-                    print(f"[DEBUG] Invalid step in path: {step}")
                     return False
             self.set_position(last_x, last_y)
-            print(f"[DEBUG] Moved to position: {last_x}, {last_y}")
             return True
 
     def is_out_of_path(self, combined_path: List[Tuple[int,int]]) -> bool:
@@ -73,4 +69,3 @@ class EntityMovement:
             x * self.grid.cell_size + self.grid.cell_size / 4, 
             y * self.grid.cell_size + self.grid.cell_size / 4
         )
-        print(f"[DEBUG] Entity position set to: {self.entity.position}")

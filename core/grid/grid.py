@@ -1,9 +1,8 @@
-from operator import is_
 from core.grid.dungeon_generator import DungeonGenerator
 from core.grid.objects_manager import GridObjectsManager
 from core.grid.renderer import GridRenderer
 from .pathfinding import Pathfinding
-from typing import Tuple, List, TYPE_CHECKING
+from typing import Tuple
 
 class Grid:
     def __init__(self, size: int = 50, cell_size: int = 64) -> None:

@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING
-import pygame
+from debugging import logger
 
 from core.event import Event
 
@@ -36,7 +36,7 @@ class Actions:
             try:
                 selected_feat.execute(**args)
             except ValueError as e:
-                print(f"Feat execution failed: {e}")
+                logger.log(f"Feat execution failed: {e}", "ERROR")
 
     def inventory(self) -> None:
         player = self.entity_manager.get_character()

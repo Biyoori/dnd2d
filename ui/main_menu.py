@@ -1,5 +1,6 @@
 import pygame
 from settings import font_path, screen_width, screen_height
+from debugging import logger
 
 class MainMenu:
     def __init__(self, screen):
@@ -54,16 +55,16 @@ class MainMenu:
 
     def execute_option(self, option: int) -> None:
         if option == 0:
-            print("Starting game...")
+            logger.log("Starting game...", "INFO")
             self.running = False
         elif option == 1:
-            print("Loading game...")
+            logger.log("Loading game...", "INFO")
             # Add logic to load a game
         elif option == 2:
-            print("Opening settings...")
+            logger.log("Opening settings...", "INFO")
             # Add logic to open settings
         elif option == 3:
-            print("Exiting...")
+            logger.log("Exiting...", "INFO")
             self.running = False
             pygame.quit()
             

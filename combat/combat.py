@@ -1,6 +1,7 @@
 from typing import List, TYPE_CHECKING
 import random
 from collections import deque
+from ui.game_console import console
 
 if TYPE_CHECKING:
     from entities.entity import Entity
@@ -9,6 +10,7 @@ if TYPE_CHECKING:
 class Combat:
     def __init__(self, characters: List["Entity"], enemies: List["Entity"], turn_manager: "TurnManager") -> None:
         self.characters = characters
+        self.enemies = enemies
         self.combatants = characters + enemies
         self.turn_queue = deque(self.combatants)
         self.turn_manager = turn_manager
@@ -23,7 +25,7 @@ class Combat:
 
         for combatant in self.combatants:
             roll = self.roll_dice(20)
-            dex_mod = combatant.stats._abilities.get_mod("DEX")
+            dex_mod = combatant.stats.get_mod("DEX")
             initiative = roll + dex_mod
             self.initiative_order[combatant] = initiative
 
@@ -44,8 +46,25 @@ class Combat:
             current = self.turn_queue.popleft()
             self.turn_queue.append(current)
             self.turn_manager.current_turn_entity = current
-            print(f"Now's {current.name}'s turn. Queue: {[entity.name for entity in self.turn_queue]}")
+            console.log(f"Now's {current.name}'s turn. Initiative Order: {[entity.name for entity in self.turn_queue]}")
             self.turn_manager.start_turn(current)
         
     def get_player(self) -> "Entity":
         return self.characters[0] if self.characters else None
+    
+    def add_enemies(self, enemies: List["Entity"]) -> None:
+        for enemy in enemies:
+            self.enemies.append(enemy)
+            self.combatants.append(enemy)
+            self.turn_queue.append(enemy)
+            self.roll_initiative_for_combatant(enemy)
+            console.log(f"{enemy.name} has joined the combat!")
+
+    def roll_initiative_for_combatant(self, combatant: "Entity") -> None:
+        roll = self.roll_dice(20)
+        dex_mod = combatant.stats.get_mod("DEX")
+        initiative = roll + dex_mod
+        self.initiative_order[combatant] = initiative
+
+        # Re-sort the turn queue based on the new initiative
+        self.turn_queue = deque(sorted(self.turn_queue, key=lambda c: self.initiative_order[c], reverse=True))

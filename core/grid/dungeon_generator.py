@@ -1,5 +1,4 @@
-from re import split
-from turtle import width
+from debugging import logger
 from typing import TYPE_CHECKING, List, Tuple
 import random
 
@@ -11,70 +10,42 @@ if TYPE_CHECKING:
 class DungeonGenerator:
     def __init__(self, grid: "Grid") -> None:
         self._grid= grid
-    
-    def generate_bsp(self, room_count: int = 5, min_room_size: int = 5) -> List["Room"]:
+
+    def generate_rp(self, room_count: int = 5, min_room_size: int = 5, max_room_size = 10) -> List["Room"]:
         self._grid.clear_matrix()
-        spaces = self._split_space(0, 0, self._grid.size[0], self._grid.size[1], min_room_size)
-
-        rooms = self._generate_rooms(spaces, min_room_size)
-
-        self._connect_rooms(rooms)
-
-        print("[DEBUG] Dungeon generated successfully.")
-        print("[DEBUG] Rooms generated:")
-        for room in rooms:
-            print(f"[DEBUG] Room at ({room.x}, {room.y}) with size ({room.width}, {room.height})")
-        return rooms
-
-    def _split_space(self, x: int, y: int, width: int, height: int, min_size: int) -> List[Tuple[int, int, int, int]]:
-        if width < min_size * 2 and height < min_size * 2: 
-            return [(x, y, width, height)]
-        
-        split_horizontally = random.choice([True, False])
-
-        if width < height and width >= min_size * 2:
-            split_horizontally = False
-        elif height < width and height >= min_size * 2:
-            split_horizontally = True
-
-        if split_horizontally:
-            if height < min_size * 2:
-                return [(x, y, width, height)]
-            split = random.randint(min_size, height - min_size)
-            return (self._split_space(x, y, width, split, min_size) +
-                    self._split_space(x, y + split, width, height - split, min_size))
-        else:
-            if width < min_size * 2:
-                return [(x, y, width, height)]
-            split = random.randint(min_size, width - min_size)
-            return (self._split_space(x, y, split, height, min_size) +
-                    self._split_space(x + split, y, width - split, height, min_size))
-        
-    def _generate_rooms(self, spaces: List[Tuple[int, int, int, int]], min_room_size: int, room_buffer: int = 1) -> List[Tuple[int, int, int, int]]:
         rooms = []
-        for x, y, width, height in spaces:
 
-            if width < min_room_size or height < min_room_size:
-                continue
-
-            room_width = random.randint(min_room_size, width)
-            room_height = random.randint(min_room_size, height)
-            room_x = random.randint(x, x + width - room_width)
-            room_y = random.randint(y, y + height - room_height)
+        while (len(rooms) < room_count):
+            room_width = random.randint(min_room_size, max_room_size)
+            room_height = random.randint(min_room_size, max_room_size)
+            room_x = random.randint(1, self._grid.size[0] - room_width - 1)
+            room_y = random.randint(1, self._grid.size[1] - room_height - 1)
 
             new_room = Room(room_x, room_y, room_width, room_height)
 
-            if any(new_room.intersects_with_buffer(existing_room, room_buffer) for existing_room in rooms):
+            if any(new_room.intersects(existing_room) for existing_room in rooms):
                 continue
 
             rooms.append(new_room)
-
             for row in range(room_y, room_y + room_height):
                 for col in range(room_x, room_x + room_width):
                     self._grid.set_cell(col, row, 0)
 
+        # Set the room type for each room
+        starting_room = random.choice(rooms)
+        starting_room.room_type = "start"
+
+        for room in rooms:
+            if room.room_type == "start":
+                room.cr_budget = 0
+            else:
+                room.cr_budget = 0.25
+
+        # Connect the rooms with corridors
+        self._connect_rooms(rooms)
+        
         return rooms
-    
+        
     def _connect_rooms(self, rooms: List["Room"]) -> None:
         for i in range(len(rooms) - 1):
             room_a = rooms[i]
@@ -106,7 +77,7 @@ class DungeonGenerator:
             self._grid.set_cell(new_x, new_y, 0)
             current_x, current_y = new_x, new_y
 
-        print("[DEBUG] Dungeon generated successfully.")
+        logger.log("Dungeon generated successfully.", "INFO")
 
     def _get_free_positions(self) -> list[tuple[int, int]]:
         free_positions = []
@@ -116,34 +87,58 @@ class DungeonGenerator:
                     free_positions.append((x, y))
         return free_positions
 
-    def spawn_entities(self, player: "Character", enemies: list["Enemy"]) -> None:
-        free_positions = self._get_free_positions()
-        print(free_positions)
-        if not free_positions:
-            print("[DEBUG] No free positions available for spawning entities.")
+    def spawn_entities(self, player: "Character", enemies: list["Enemy"], rooms: List["Room"]) -> None:
+        starting_room = next((room for room in rooms if room.room_type == "start"), None)
+        if not starting_room:
+            logger.log("No starting room found for spawning entities.", "ERROR")
             return
         
-        player_pos = random.choice(free_positions)
-        free_positions.remove(player_pos)
+        player_positions = [(x, y) for y in range(starting_room.y, starting_room.y + starting_room.height) 
+                            for x in range(starting_room.x, starting_room.x + starting_room.width) 
+                            if self._grid.get_cell((x, y)) == 0]
+        
+        if not player_positions:
+            logger.log("No free positions available for spawning player.", "ERROR")
+            return
+        
+        player_pos = random.choice(player_positions)
         player.set_grid_position(player_pos[0], player_pos[1])
-        print(f"[DEBUG] Player spawned at {player_pos}.")
+        logger.log(f"Player spawned at {player_pos}.", "INFO")
 
-        for enemy in enemies:
-            if not free_positions:
-                print("[DEBUG] No free positions available for spawning enemies.")
-                break
-            enemy_pos = random.choice(free_positions)
-            free_positions.remove(enemy_pos)
-            enemy.set_grid_position(enemy_pos[0], enemy_pos[1])
-            print(f"[DEBUG] Enemy spawned at {enemy_pos}.")
-            enemy.set_grid_position(enemy_pos[0], enemy_pos[1])
+        for room in rooms:
+            if room.room_type == "start":
+                continue
+
+            room_enemies = []
+            remaining_cr = room.cr_budget
+
+            while remaining_cr > 0:
+                enemy = random.choice(enemies)
+                if enemy.challenge_rating <= remaining_cr:
+                    room_enemies.append(enemy)
+                    remaining_cr -= enemy.challenge_rating
+
+            for enemy in room_enemies:
+                enemy_positions = [(x, y) for y in range(room.y, room.y + room.height)
+                                   for x in range(room.x, room.x + room.width)
+                                   if self._grid.get_cell((x, y)) == 0]
+                
+                if not enemy_positions:
+                    logger.log("No free positions available for spawning enemies.", "ERROR")
+                    continue
+
+                enemy_pos = random.choice(enemy_positions)
+                enemy.set_grid_position(enemy_pos[0], enemy_pos[1])
+                logger.log(f"Enemy spawned at {enemy_pos}.", "INFO")
 
 class Room:
-    def __init__(self, x: int, y: int, width: int, height: int) -> None:
+    def __init__(self, x: int, y: int, width: int, height: int, room_type="normal", cr_budget: float = 1.0) -> None:
         self.x = x
         self.y = y
         self.width = width
         self.height = height
+        self.room_type = room_type
+        self.cr_budget = cr_budget
 
     def get_center(self) -> Tuple[int, int]:
         return (self.x + self.width // 2, self.y + self.height // 2)
@@ -159,3 +154,6 @@ class Room:
                     self.x > other.x + other.width + buffer or
                     self.y + self.height + buffer < other.y or
                     self.y > other.y + other.height + buffer)
+    
+    def contains(self, x: int, y: int) -> bool:
+        return self.x <= x < self.x + self.width and self.y <= y < self.y + self.height

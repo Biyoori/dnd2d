@@ -2,6 +2,8 @@ import pygame
 from core.event import Event
 from entities.character.character import Character
 from settings import get_color
+from debugging import logger
+from .game_console import console
 
 class InventoryMenu:
     def __init__(self, font: pygame.font.Font, screen: pygame.Surface) -> None:
@@ -38,11 +40,10 @@ class InventoryMenu:
         if event.type == pygame.MOUSEBUTTONDOWN:
             for rect, item in self.buttons:
                 if rect.collidepoint(event.pos):
-                    print(f"Selected item: {item.name}")
+                    console.log(f"Selected item: {item.name}")
                     if item.item_type == "weapon":
                         if Event.notify("use_action"):
                             Event.notify("equip_weapon", item)
-                            print(f"Equipped weapon: {item.name}")
                     self.close()
                     break
         if event.type == pygame.MOUSEMOTION:
@@ -55,9 +56,9 @@ class InventoryMenu:
     def toggle_menu(self, player: "Character") -> None:
         self.active = not self.active
         if self.active:
-            print("Inventory menu opened.")
+            logger.log("Inventory menu opened.", "UI")
         else:
-            print("Inventory menu closed.")
+            logger.log("Inventory menu closed.", "UI")
 
         self.inventory = player.inventory.get_inventory()
         for index, item in enumerate(self.inventory):

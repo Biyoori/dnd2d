@@ -2,6 +2,7 @@ from math import ceil
 from typing import Set, List, TYPE_CHECKING
 from dataclasses import dataclass, field
 from ui.game_console import console
+from debugging import logger
 
 if TYPE_CHECKING:
     from entities.entity import Entity
@@ -70,7 +71,6 @@ class HealthSystem:
     
     def add_resistances(self, resistances: List[str]) -> HealthData:
         current_resistances = self._data.resistances 
-        print(self._data.resistances)
         for resistance in resistances:
             current_resistances.add(resistance)
         self._data = HealthData(
@@ -89,7 +89,7 @@ class HealthSystem:
             try:
                 current_resistances.remove(resistance)
             except:
-                print(f"Reistance - {resistance} not found.")
+                logger.log(f"{self._entity.name} does not have {resistance} resistance.", "ERROR")
         self._data = HealthData(
             max_hp=self._data.max_hp,
             current_hp=self._data.current_hp,

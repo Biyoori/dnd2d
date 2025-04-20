@@ -4,6 +4,7 @@ from ui.utils.text_renderer import draw_text
 from settings import get_color
 from .abilities import AbilityStep
 import pygame
+from debugging import logger
 
 if TYPE_CHECKING:
     from character_creator import CharacterCreator
@@ -31,7 +32,6 @@ class ItemStep(CreationStep):
                     item_counts[key] = item_counts.get(key, 0) + count
 
         self.flattened_options = [(category, name, count) for (category, name), count in item_counts.items()]
-        print(self.flattened_options)
 
     def draw(self) -> None:
         y_offset = self.center_y - 150
@@ -73,16 +73,16 @@ class ItemStep(CreationStep):
                 category, selected_item, count = self.flattened_options[self.selected_index]
 
                 already_picked = [(cat, item, cnt) for cat, item, cnt in self.chosen_gear if cat == category]
-                print(f"Already picked: {already_picked}")
+                logger.log(f"Already picked: {already_picked}", "DEBUG")
                 if not already_picked:
                     self.chosen_gear.append((category, selected_item, count))
-                    print(f"Selected gear: {selected_item} x {count}")
+                    logger.log(f"Selected gear: {selected_item} x {count}", "DEBUG")
                 else:
                     self.chosen_gear = [
                         (cat, item, cnt) if cat != category else (category, selected_item, count)
                         for cat, item, cnt in self.chosen_gear
                     ]
-                    print(f"Replaced {already_picked[0]} with {selected_item}")
+                    logger.log(f"Replaced {already_picked[0]} with {selected_item}", "DEBUG")
                     
             elif event.key == pygame.K_SPACE:
                 chosen_categories = {cat for cat, _, _ in self.chosen_gear}
@@ -93,6 +93,6 @@ class ItemStep(CreationStep):
                     ]
                     self.creator.set_step(AbilityStep)
                 else:
-                    print("You must select one item from each category before proceeding.")
+                    logger.log("You must select one item from each category before proceeding.", "WARNING")
 
         

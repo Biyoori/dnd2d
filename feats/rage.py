@@ -19,7 +19,6 @@ def rage_effect(character: Character) -> None:
         rage_bonus = 4
     else:
         rage_bonus = 2
-    print(rage_bonus)
     character.attacking.other_bonuses += rage_bonus
     #Advantage kiedy zrobie do niego system
     #Blokada na spelle

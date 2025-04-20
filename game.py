@@ -1,6 +1,5 @@
-from core.event import Event
+from debugging import logger, DebugOverlay, DebugConsole
 from entities.components.factions import FactionSystem
-from items.weapon import Weapon
 from settings import *
 from core.grid.grid import Grid
 from combat.combat import Combat
@@ -27,29 +26,34 @@ clock = pygame.time.Clock()
 pygame.font.init()
 font = pygame.font.Font("Assets/UI/Fonts/IM_Fell_DW_Pica/IMFellDWPica-Regular.ttf", 24)
 
+entity_manager = GameEntityManager()
+log_overlay = DebugOverlay(pygame.font.Font(None, 18))
+debug_console = DebugConsole(entity_manager)
 text_renderer.init(font_size=40)
 main_menu = MainMenu(gameScreen)
 faction_system = FactionSystem()
 character_creator = CharacterCreator(gameScreen)
 enemy_factory = EnemyFactory("data/enemies")
 movement_manager = MovementManager()
+
 turn_manager = TurnManager(movement_manager)
-entity_manager = GameEntityManager()
 turn_info = TurnInfo(turn_manager, gameScreen)
 feat_menu_manager = FeatMenuManager(gameScreen)
 level_up_ui = ClassSelectionUI(gameScreen, font)
 inventory_menu = InventoryMenu(font, gameScreen)
 
 grid = Grid()
-grid.generator.generate_bsp(20, 5)
+rooms = grid.generator.generate_rp(10)
 
 main_menu.display_menu()
 
 
 entity_manager.add_character(character_creator.run())
-entity_manager.add_enemy(enemy_factory.create_enemy(grid, "skeleton"))
+for enemy in range(10):
+    entity_manager.add_enemy(enemy_factory.create_enemy(grid, "skeleton"))
+    
 
-grid.generator.spawn_entities(entity_manager.get_character(), entity_manager.get_enemies())
+grid.generator.spawn_entities(entity_manager.get_character(), entity_manager.get_enemies(), rooms)
 
 menu = RadialMenu(entity_manager, grid, feat_menu_manager)
 menu.enable_all_sectors(False)
@@ -64,13 +68,14 @@ print(entity_manager.get_character().race)
 
 gameActive = True
 
-
-entity_manager.get_enemies()[0].initialize(*entity_manager.get_enemies()[0].grid_position, grid,movement_manager)
+for enemy in entity_manager.get_enemies():
+    if enemy.grid_position == (0, 0):
+        entity_manager.remove_enemy(enemy)
+        del enemy
+    enemy.initialize(*enemy.grid_position, grid, movement_manager)
 entity_manager.get_character().initialize(*entity_manager.get_character().grid_position, grid, movement_manager)
 
-combat = Combat([entity_manager.get_character()], entity_manager.get_enemies(), turn_manager)
-turn_manager.start_combat(combat)
-print(Event.list_events())
+combat = Combat([entity_manager.get_character()], [], turn_manager)
 
 
 def handle_events() -> None:
@@ -99,8 +104,15 @@ def handle_events() -> None:
             for enemy in entity_manager.get_enemies():
                 enemy.update_size(grid)
                 enemy.movement.set_position(*enemy.grid_position)
-        if event.type == pygame.KEYUP and event.key == pygame.K_SPACE:
+        if event.type == pygame.KEYUP and event.key == pygame.K_RETURN and turn_manager.is_in_combat():
             turn_manager.end_turn()
+        if event.type == pygame.KEYUP and event.key == pygame.K_F1:
+            logger.toggle()
+        if event.type == pygame.KEYUP and event.key == pygame.K_F2:
+            logger.clear_logs()
+        if event.type == pygame.KEYUP and event.key == pygame.K_BACKQUOTE:  # Klawisz `~`
+            command = input("Enter debug command: ")
+            debug_console.handle_command(command)
             
 
 def draw() -> None:
@@ -108,9 +120,13 @@ def draw() -> None:
     grid.renderer.render(gameScreen)
     
     entity_manager.get_character().draw(gameScreen)
-    entity_manager.get_enemies()[0].draw(gameScreen)
+    for enemy in entity_manager.get_enemies():
+        enemy.draw(gameScreen)
 
     entity_manager.get_character().pathfinder.draw_path(gameScreen, grid.cell_size)
+
+    log_overlay.draw_logs(gameScreen, logger.logs)
+    log_overlay.draw_fps(gameScreen, clock)
 
     menu.draw(gameScreen)
     turn_info.draw()
@@ -133,6 +149,7 @@ while gameActive:
     draw()
     handle_events()
     update_enemies()
+    turn_manager.check_combat_trigger(entity_manager.get_character(), entity_manager.get_enemies(), rooms, combat)
     clock.tick(framerate)
 
 pygame.quit()

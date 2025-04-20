@@ -3,8 +3,6 @@ import pygame
 
 if TYPE_CHECKING:
     from combat.turn_manager import TurnManager
-    
-
 
 class TurnInfo:
     def __init__(self, turn_manager: "TurnManager", screen: pygame.Surface) -> None:

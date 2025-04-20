@@ -1,4 +1,5 @@
 from core.event import Event
+from debugging import logger
 from entities.enemy import Enemy
 from typing import TYPE_CHECKING
 from ui.game_console import console
@@ -8,6 +9,7 @@ if TYPE_CHECKING:
     from movement.movement_manager import MovementManager
     from combat.combat import Combat
     from entities.entity import Entity
+    from core.grid.dungeon_generator import Room
 
 class TurnManager:
     def __init__(self, movement_manager: "MovementManager") -> None:
@@ -82,3 +84,22 @@ class TurnManager:
         
     def get_current_entity(self):
         return self.current_turn_entity
+    
+    def check_combat_trigger(self, player: "Entity", enemies: list["Entity"], rooms: list["Room"], combat: "Combat") -> None:
+        if self.in_combat:
+            return
+        
+        player_room = next((room for room in rooms if room.contains(*player.grid_position)), None)
+
+        if not player_room:
+            return
+        
+        enemies_in_room = [
+            enemy for enemy in enemies
+            if enemy.health.is_alive() and any(room.contains(*enemy.grid_position) for room in rooms if room == player_room)
+        ]
+
+        if enemies_in_room:
+            logger.log(f"Combat triggered with {len(enemies_in_room)} enemies.", "INFO")
+            combat.add_enemies(enemies_in_room)
+            self.start_combat(combat)

@@ -1,9 +1,8 @@
 from dataclasses import dataclass
 from feat import Feat
-import feat
 from items.weapon import Weapon
-from typing import TYPE_CHECKING, ClassVar, List, Optional
-from ui.game_console import console
+from typing import TYPE_CHECKING, ClassVar, List
+from debugging import logger
 
 if TYPE_CHECKING:
     from entities.entity import Entity
@@ -50,7 +49,7 @@ class TalonsFeat(Feat):
             return True
 
         except Exception as e:
-            print(f"Error executing Talons: {e}")
+            logger.log(f"Error executing Talons: {e}", "ERROR")
             return False
         finally:
             if current_weapon:

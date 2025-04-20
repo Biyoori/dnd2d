@@ -1,3 +1,4 @@
+from debugging import logger
 from operator import is_
 from typing import TYPE_CHECKING
 
@@ -46,15 +47,12 @@ class SkeletonAi:
     def is_in_range(self, target: "Entity", attack_range: int) -> bool:
         dx: int = abs(self.entity.grid_position[0] - target.grid_position[0])
         dy: int = abs(self.entity.grid_position[1] - target.grid_position[1])
-        print(f"dx: {dx}, dy: {dy}, attack_range: {attack_range}")
-        print(f"dx + dy: {dx + dy}, attack_range: {attack_range}")
 
         return dx <= attack_range and dy <= attack_range or (dx + dy <= attack_range and dx != 0 and dy != 0)
 
     def _move_to_target(self, target: "Entity") -> None:
         self.log_decision(f"Moving towards target at {target.grid_position}")
         path = self.grid.pathfinding.find_path_a_star(tuple(self.entity.grid_position), tuple(target.grid_position))
-        print("[DEBUG] Path found:", path)
 
         if not path:
             self.log_decision("No path found to target.")
@@ -65,14 +63,13 @@ class SkeletonAi:
         for step in range(1, steps_to_take + 1):
             next_step = path[step]
             if next_step == tuple(target.grid_position):
-                print(f"Skeleton reached target at {next_step}")
                 break
 
             self.entity.set_grid_position(*next_step)
             self.entity.set_position(self.grid)
 
     def log_decision(self, message: str) -> None:
-        print(f"[DEBUG] SkeletonAI: {message}")
+        logger.log(f"SkeletonAI: {message}", "AI")
 
     def draw_path(self, path: list, screen: pygame.Surface) -> None:
         for step in path:

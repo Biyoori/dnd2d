@@ -3,6 +3,7 @@ from settings import get_color
 from .creation_step import CreationStep
 from .class_ import ClassStep
 from ui.utils.text_renderer import draw_text
+from debugging import logger
 
 class NameStep(CreationStep):
     MAX_NAME_LENGTH = 12
@@ -19,7 +20,7 @@ class NameStep(CreationStep):
                 self.creator.character_name = self.creator.character_name[:-1]
             elif event.key == pygame.K_RETURN:
                 if not self.creator.character_name.strip():
-                    print("Character name is required.")
+                    logger.log("Character name is required.", "ERROR")
                     return
                 self.creator.set_step(ClassStep)
             elif len(self.creator.character_name) < self.MAX_NAME_LENGTH and event.unicode.isprintable() and not event.unicode.isspace():

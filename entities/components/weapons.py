@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 from core.event import Event
 from items.weapon import Weapon
 from ui.game_console import console
+from debugging import logger
 
 if TYPE_CHECKING:
     from entities.components.inventory import InventorySystem
@@ -20,7 +21,7 @@ class WeaponSystem:
                 self.equipped_weapon = item
                 console.log(f"Equipped {item.name}")
                 return
-        console.log(f"No such weapon in in inventory: {weapon_name}")
+        logger.log(f"No such weapon in in inventory: {weapon_name}", "ERROR")
 
     def get_equipped_weapon(self) -> Weapon | None:
         return self.equipped_weapon
