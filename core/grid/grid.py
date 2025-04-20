@@ -6,7 +6,7 @@ from .pathfinding import Pathfinding
 from typing import Tuple, List, TYPE_CHECKING
 
 class Grid:
-    def __init__(self, size: int = 20, cell_size: int = 64) -> None:
+    def __init__(self, size: int = 50, cell_size: int = 64) -> None:
         self.cell_size = cell_size
         self._grid_width = size
         self._grid_height = size
@@ -17,7 +17,7 @@ class Grid:
         self.renderer = GridRenderer(self)
         self.generator = DungeonGenerator(self)
 
-    
+    @property
     def size(self) -> tuple[int, int]:
         return self._grid_width, self._grid_height
     

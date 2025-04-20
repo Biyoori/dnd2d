@@ -41,7 +41,7 @@ level_up_ui = ClassSelectionUI(gameScreen, font)
 inventory_menu = InventoryMenu(font, gameScreen)
 
 grid = Grid()
-grid.generator.generate()
+grid.generator.generate_bsp(20, 5)
 
 main_menu.display_menu()
 
@@ -68,7 +68,7 @@ gameActive = True
 entity_manager.get_enemies()[0].initialize(*entity_manager.get_enemies()[0].grid_position, grid,movement_manager)
 entity_manager.get_character().initialize(*entity_manager.get_character().grid_position, grid, movement_manager)
 
-combat = Combat([entity_manager.get_character()], [entity_manager.get_enemies()[0]], turn_manager)
+combat = Combat([entity_manager.get_character()], entity_manager.get_enemies(), turn_manager)
 turn_manager.start_combat(combat)
 print(Event.list_events())
 
