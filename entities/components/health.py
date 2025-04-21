@@ -53,6 +53,10 @@ class HealthSystem:
             vulnerabilities=self._data.vulnerabilities
         )
         console.log(f"{self._entity.name} takes {damage} {damage_type} damage! Current health: {self._data.current_hp}")
+
+        if not self._data.is_alive:
+            return self.die()
+            
         return self._data
     
     def heal(self, amount: int) -> HealthData:
@@ -133,3 +137,19 @@ class HealthSystem:
     
     def is_alive(self) -> bool:
         return self._data.is_alive
+    
+    def die(self) -> HealthData:
+        self._data = HealthData(
+            max_hp=self._data.max_hp,
+            current_hp=0,
+            is_alive=False,
+            resistances=self._data.resistances,
+            immunities=self._data.immunities,
+            vulnerabilities=self._data.vulnerabilities
+        )
+        console.log(f"{self._entity.name} has died!")
+        
+        if hasattr(self._entity, "on_death"):
+            self._entity.on_death()
+
+        return self._data

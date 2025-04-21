@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING, List
 
+from core.event import Event
+
 if TYPE_CHECKING:
     from entities.enemy import Enemy
     from entities.character.character import Character
@@ -8,6 +10,8 @@ class GameEntityManager:
     def __init__(self) -> None:
         self._characters = []
         self._enemies = []
+
+        Event.subscribe("remove_enemy", self.remove_enemy)
 
     def get_character(self) -> "Character":
         return self._characters[0] if self._characters else None
@@ -24,3 +28,4 @@ class GameEntityManager:
     def remove_enemy(self, enemy: "Enemy"):
         if enemy in self._enemies:
             self._enemies.remove(enemy)
+            del enemy
