@@ -1,5 +1,6 @@
 import importlib
 from typing import TYPE_CHECKING
+from core.event import Event
 from entities.components.factions import Faction
 from entities.components.health import HealthData, HealthSystem
 from entities.components.stats import AbilityScores, Proficiencies, StatsSystem
@@ -68,5 +69,8 @@ class Enemy(Entity):
             raise ValueError(f"Module '{module_name}' has no 'execute' function: {str(e)}")
         except Exception as e:
             raise ValueError(f"Error executing action '{action_name}': {str(e)}")
+        
+    def on_death(self) -> None:
+        Event.notify("remove_enemy", self)
 
     

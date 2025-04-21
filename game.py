@@ -1,4 +1,5 @@
 from debugging import logger, DebugOverlay, DebugConsole
+from entities import entity
 from entities.components.factions import FactionSystem
 from settings import *
 from core.grid.grid import Grid
@@ -82,8 +83,9 @@ def handle_events() -> None:
     global gameActive
 
     for event in pygame.event.get():
-        entity_manager.get_character().update(event, turn_manager)
-        menu.process_events(event)
+        if entity_manager.get_character().health.is_alive():
+            entity_manager.get_character().update(event, turn_manager)
+            menu.process_events(event)
         level_up_ui.handle_event(event)
         inventory_menu.handle_event(event)
         
@@ -118,8 +120,8 @@ def handle_events() -> None:
 def draw() -> None:
     gameScreen.fill(get_color("black"))
     grid.renderer.render(gameScreen)
-    
-    entity_manager.get_character().draw(gameScreen)
+    if entity_manager.get_character().health.is_alive():
+        entity_manager.get_character().draw(gameScreen)
     for enemy in entity_manager.get_enemies():
         enemy.draw(gameScreen)
 
@@ -128,7 +130,8 @@ def draw() -> None:
     log_overlay.draw_logs(gameScreen, logger.logs)
     log_overlay.draw_fps(gameScreen, clock)
 
-    menu.draw(gameScreen)
+    if entity_manager.get_character().health.is_alive():
+        menu.draw(gameScreen)
     turn_info.draw()
     level_up_ui.draw()
     console.draw(gameScreen)
