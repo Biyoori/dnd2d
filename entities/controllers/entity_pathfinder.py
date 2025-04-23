@@ -46,7 +46,7 @@ class EntityPathfinder:
         self._navigation_path = []
         self._temp_path = []
 
-    def draw_path(self, screen: pygame.Surface, cell_size: int) -> None:
+    def draw_path(self, screen: pygame.Surface, cell_size: int, offset: Tuple[int, int]) -> None:
         yellow = get_color("yellow")
         red = get_color("red")
         green = get_color("green")
@@ -54,7 +54,7 @@ class EntityPathfinder:
         combined_path = list(dict.fromkeys(self._navigation_path + self._temp_path))
 
         pixel_positions = [
-            (x * cell_size + cell_size // 2, y * cell_size + cell_size // 2)
+            (x * cell_size + cell_size // 2 + offset[0], y * cell_size + cell_size // 2 + offset[1])
             for x, y in combined_path
         ]
 
@@ -68,9 +68,11 @@ class EntityPathfinder:
 
         for (x, y), can_move in zip(combined_path, can_move_results):
             color = green if can_move and self._grid.get_cell((x,y)) == 0 else red
+            screen_x = x * cell_size + offset[0]
+            screen_y = y * cell_size + offset[1]
             pygame.draw.rect(
                 screen, 
                 color, 
-                (x * cell_size, y * cell_size, cell_size -1, cell_size -1), 
+                (screen_x, screen_y, cell_size -1, cell_size -1), 
                 1
             )

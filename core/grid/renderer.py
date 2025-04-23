@@ -10,7 +10,7 @@ class GridRenderer:
         self._grid = grid
         self._highlighted_cells = set()
 
-    def render(self, screen: pygame.Surface) -> None:
+    def render(self, screen: pygame.Surface, offset: Tuple[int, int]) -> None:
         floor_color = get_color("gray")
         wall_color = get_color("black")
         green = get_color("green")
@@ -20,12 +20,14 @@ class GridRenderer:
         for row, grid_row in enumerate(self._grid.matrix):
             for col, cell in enumerate(grid_row):
                 cell_color = wall_color if cell == 1 else floor_color
-                pygame.draw.rect(screen, cell_color, (col*self._grid.cell_size, row*self._grid.cell_size, self._grid.cell_size-1, self._grid.cell_size-1))
+                screen_x = col * self._grid.cell_size + offset[0]
+                screen_y = row * self._grid.cell_size + offset[1]
+                pygame.draw.rect(screen, cell_color, (screen_x, screen_y, self._grid.cell_size-1, self._grid.cell_size-1))
                 if (col, row) in self._highlighted_cells:
                     pygame.draw.rect(
                     screen, 
                     red,
-                    (col * self._grid.cell_size, row * self._grid.cell_size, self._grid.cell_size, self._grid.cell_size),
+                    (screen_x, screen_y, self._grid.cell_size, self._grid.cell_size),
                     3
                 )
                     

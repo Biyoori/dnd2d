@@ -1,3 +1,6 @@
+from doctest import debug
+from math import pi
+from core.camera import Camera
 from debugging import logger, DebugOverlay, DebugConsole
 from entities import entity
 from entities.components.factions import FactionSystem
@@ -36,6 +39,7 @@ faction_system = FactionSystem()
 character_creator = CharacterCreator(gameScreen)
 enemy_factory = EnemyFactory("data/enemies")
 movement_manager = MovementManager()
+camera = Camera()
 
 turn_manager = TurnManager(movement_manager)
 turn_info = TurnInfo(turn_manager, gameScreen)
@@ -50,7 +54,7 @@ main_menu.display_menu()
 
 
 entity_manager.add_character(character_creator.run())
-for enemy in range(10):
+for enemy in range(1):
     entity_manager.add_enemy(enemy_factory.create_enemy(grid, "skeleton"))
     
 
@@ -78,13 +82,14 @@ entity_manager.get_character().initialize(*entity_manager.get_character().grid_p
 
 combat = Combat([entity_manager.get_character()], [], turn_manager)
 
-
 def handle_events() -> None:
     global gameActive
 
     for event in pygame.event.get():
         if entity_manager.get_character().health.is_alive():
-            entity_manager.get_character().update(event, turn_manager)
+            if hasattr(event, 'pos'):
+                mouse_pos, _ = camera.apply_offset(event.pos, grid.cell_size)
+                entity_manager.get_character().update(event, turn_manager, mouse_pos)
             menu.process_events(event)
         level_up_ui.handle_event(event)
         inventory_menu.handle_event(event)
@@ -98,7 +103,8 @@ def handle_events() -> None:
             elif event.button == 1:
                 menu.close()
                 if entity_manager.get_character().targeting.target_selection:
-                    entity_manager.get_character().targeting.handle_target_selection(event.pos, grid, entity_manager.get_character().attacking, entity_manager.get_character(), turn_manager)
+                    grid_pos, pixel_pos = camera.apply_offset(event.pos, grid.cell_size)
+                    entity_manager.get_character().targeting.handle_target_selection(grid_pos, grid, entity_manager.get_character().attacking, entity_manager.get_character(), turn_manager)
         if event.type == pygame.MOUSEWHEEL:
             grid.cell_size += event.y
             entity_manager.get_character().update_size(grid)
@@ -115,17 +121,27 @@ def handle_events() -> None:
         if event.type == pygame.KEYUP and event.key == pygame.K_BACKQUOTE:  # Klawisz `~`
             command = input("Enter debug command: ")
             debug_console.handle_command(command)
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_w]:  # Przesuń kamerę w górę
+            camera.move(0, camera.speed)
+        if keys[pygame.K_s]:  # Przesuń kamerę w dół
+            camera.move(0, -camera.speed)
+        if keys[pygame.K_a]:  # Przesuń kamerę w lewo
+            camera.move(camera.speed, 0)
+        if keys[pygame.K_d]:  # Przesuń kamerę w prawo
+            camera.move(-camera.speed, 0)
+        
             
 
 def draw() -> None:
     gameScreen.fill(get_color("black"))
-    grid.renderer.render(gameScreen)
+    grid.renderer.render(gameScreen, camera.offset)
     if entity_manager.get_character().health.is_alive():
-        entity_manager.get_character().draw(gameScreen)
+        entity_manager.get_character().draw(gameScreen, camera.offset)
     for enemy in entity_manager.get_enemies():
-        enemy.draw(gameScreen)
+        enemy.draw(gameScreen, camera.offset)
 
-    entity_manager.get_character().pathfinder.draw_path(gameScreen, grid.cell_size)
+    entity_manager.get_character().pathfinder.draw_path(gameScreen, grid.cell_size, camera.offset)
 
     log_overlay.draw_logs(gameScreen, logger.logs)
     log_overlay.draw_fps(gameScreen, clock)
@@ -138,20 +154,9 @@ def draw() -> None:
     inventory_menu.draw_menu()
     pygame.display.flip()
 
-def update_enemies() -> None:
-    for enemy in entity_manager.get_enemies():
-        if enemy.health.is_alive():
-            pass
-        else:
-            pass
-            #enemy.die()
-            #entity_manager.remove_enemy(enemy)
-            #combat.remove_enemy(enemy)
-
 while gameActive:
     draw()
     handle_events()
-    update_enemies()
     turn_manager.check_combat_trigger(entity_manager.get_character(), entity_manager.get_enemies(), rooms, combat)
     clock.tick(framerate)
 

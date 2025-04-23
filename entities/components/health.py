@@ -152,4 +152,5 @@ class HealthSystem:
         if hasattr(self._entity, "on_death"):
             self._entity.on_death()
 
+        self._entity = None
         return self._data

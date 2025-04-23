@@ -1,26 +1,26 @@
-from encodings.punycode import T
 from typing import Tuple
+from pygame import Vector2
 
 
 class Camera:
-    def __init__(self, screen_width: int, screen_height: int, layer_width: int, layer_height: int) -> None:
-        self.layer_width = layer_width
-        self.layer_height = layer_height
-        self.screen_width = screen_width
-        self.screen_height = screen_height
-        self.speed = 5
+    def __init__(self) -> None:
         self.offset_x = 0
         self.offset_y = 0
+        self.speed = 10
+
+    @property
+    def offset(self) -> Tuple[int, int]:
+        return self.offset_x, self.offset_y    
 
     def move(self, dx: int, dy: int) -> None:
-        """Move the camera by dx and dy."""
-        self.offset_x += dx * self.speed
-        self.offset_y += dy * self.speed
-    
-    def apply(self, position: Tuple[int, int]) -> Tuple[int, int]:
-        x,y = position
-        return x - self.offset_x, y - self.offset_y
-    
-    def get_offset(self) -> Tuple[int, int]:
-        """Get the current offset of the camera."""
-        return self.offset_x, self.offset_y
+        self.offset_x += dx
+        self.offset_y += dy
+
+    def apply_offset(self, mouse_pos: Tuple[int, int], cell_size: int) -> tuple[int, int]:
+        grid_x = mouse_pos[0] - self.offset_x
+        grid_y = mouse_pos[1] - self.offset_y
+
+        pixel_x = grid_x - self.offset[0]
+        pixel_y = grid_y - self.offset[1]
+
+        return (int(grid_x), int(grid_y)), (int(pixel_x), int(pixel_y))

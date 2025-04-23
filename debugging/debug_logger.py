@@ -1,3 +1,5 @@
+import gc
+
 class DebugLogger:
     def __init__(self) -> None:
         self.debug_mode = True
@@ -19,6 +21,14 @@ class DebugLogger:
     def clear_logs(self) -> None:
         self.logs.clear()
         print("[DEBUG] Logs cleared")
+
+    def log_references(self, obj: object) -> None:
+        if not self.debug_mode:
+            return
+        references = gc.get_referrers(obj)
+        self.log(f"Found {len(references)} references to {obj}: {references}", "DEBUG")
+        for ref in references:
+            self.log(f"Reference: {ref}", "DEBUG")
 
 logger = DebugLogger()
 logger.log("Debug logger initialized", "DEBUG")

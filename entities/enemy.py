@@ -71,6 +71,12 @@ class Enemy(Entity):
             raise ValueError(f"Error executing action '{action_name}': {str(e)}")
         
     def on_death(self) -> None:
+        self.input_handler.entity = None
+        self.movement.entity = None
+        self.pathfinder.entity = None
+        self.ai.entity = None
+        self.renderer.entity = None
         Event.notify("remove_enemy", self)
+
 
     

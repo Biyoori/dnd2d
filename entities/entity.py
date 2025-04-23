@@ -3,7 +3,7 @@ from entities.controllers.entity_pathfinder import EntityPathfinder
 from entities.controllers.movement_controller import EntityMovement
 from entities.controllers.entity_input_handler import EntityInputHandler
 from entities.entity_renderer import EntityRenderer
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple
 
 if TYPE_CHECKING:
     from entities.components.factions import Faction
@@ -61,11 +61,11 @@ class Entity:
             self._grid_y * grid.cell_size + grid.cell_size / 4
         )
 
-    def update(self, event: pygame.event, turn_manager: "TurnManager") -> None:
-        self.input_handler.handle_event(event, turn_manager)
+    def update(self, event: pygame.event, turn_manager: "TurnManager", mouse_pos: Tuple[int, int]) -> None:
+        self.input_handler.handle_event(event, turn_manager, mouse_pos)
 
-    def draw(self, surface: pygame.Surface) -> None:
-        self.renderer.draw(surface)
+    def draw(self, surface: pygame.Surface, offset: Tuple[int, int]) -> None:
+        self.renderer.draw(surface, offset)
 
     def update_size(self, grid) -> None:
         self._size = grid.cell_size // 2

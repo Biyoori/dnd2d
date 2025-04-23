@@ -18,34 +18,35 @@ class EntityInputHandler:
         self.movement_controller = movement_controller
         self.dragging = False
 
-    def handle_event(self, event: pygame.event, turn_manager: "TurnManager") -> None:
+    def handle_event(self, event: pygame.event, turn_manager: "TurnManager", mouse_pos: Tuple[int, int]) -> None:
         if not turn_manager.is_current_turn(self.entity):
             return
         
         if event.type == pygame.MOUSEBUTTONDOWN:
-            self._handle_mouse_down(event)
+            print(f"Mouse button down at {mouse_pos}")
+            self._handle_mouse_down(event, mouse_pos)
         elif event.type == pygame.MOUSEMOTION and self.dragging:
-            self._handle_mouse_move(event)
+            self._handle_mouse_move(event, mouse_pos)
         elif event.type == pygame.MOUSEBUTTONUP and event.button == self.LEFT_MOUSE_BUTTON:
             self._handle_mouse_up(turn_manager)
 
-    def _handle_mouse_down(self, event: pygame.event) -> None:   
+    def _handle_mouse_down(self, event: pygame.event, mouse_pos: Tuple[int, int]) -> None:   
         if not hasattr(event, "pos"):
             return
 
-        if event.button == self.LEFT_MOUSE_BUTTON and self._is_mouse_over_entity(*event.pos):
+        if event.button == self.LEFT_MOUSE_BUTTON and self._is_mouse_over_entity(*mouse_pos):
             self.dragging = True
             self.movement_controller.start_movement(*self.entity.grid_position)
         elif event.button == self.RIGHT_MOUSE_BUTTON and self.dragging:
             self.entity.pathfinder.break_path()               
 
-    def _handle_mouse_move(self, event: pygame.event) -> None:
+    def _handle_mouse_move(self, event: pygame.event, mouse_pos: Tuple[int, int]) -> None:
         if not hasattr(event, "pos"):
             return
         
-        self.entity.position = pygame.Vector2(event.pos) - pygame.Vector2(self.entity.size/2, self.entity.size/2)
-        grid_x = floor(event.pos[0] / self.grid.cell_size)
-        grid_y = floor(event.pos[1] / self.grid.cell_size)
+        self.entity.position = pygame.Vector2(mouse_pos) - pygame.Vector2(self.entity.size/2, self.entity.size/2)
+        grid_x = floor(mouse_pos[0] / self.grid.cell_size)
+        grid_y = floor(mouse_pos[1] / self.grid.cell_size)
         self.movement_controller.update_movement(grid_x, grid_y)
 
     def _handle_mouse_up(self, turn_manager: "TurnManager") -> None:

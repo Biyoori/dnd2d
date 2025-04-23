@@ -1,6 +1,7 @@
 from typing import List, TYPE_CHECKING
 import random
 from collections import deque
+from core.event import Event
 from ui.game_console import console
 
 if TYPE_CHECKING:
@@ -14,6 +15,8 @@ class Combat:
         self.combatants = characters + enemies
         self.turn_queue = deque(self.combatants)
         self.turn_manager = turn_manager
+
+        Event.subscribe("remove_combatant", self.remove_combatant)
 
         self.roll_initiative()
 
@@ -68,3 +71,17 @@ class Combat:
 
         # Re-sort the turn queue based on the new initiative
         self.turn_queue = deque(sorted(self.turn_queue, key=lambda c: self.initiative_order[c], reverse=True))
+
+    def remove_combatant(self, combatant: "Entity") -> None:
+        if combatant in self.combatants:
+            self.combatants.remove(combatant)
+            self.turn_queue.remove(combatant)
+            if combatant in self.enemies:
+                self.enemies.remove(combatant)
+            del self.initiative_order[combatant]
+            console.log(f"{combatant.name} has been removed from combat.")
+        else:
+            console.log(f"{combatant.name} is not in combat.")
+
+    def get_enemies(self) -> List["Entity"]:
+        return self.enemies

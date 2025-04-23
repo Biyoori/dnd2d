@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING, List
+from debugging import logger
 
 from core.event import Event
 
@@ -27,5 +28,8 @@ class GameEntityManager:
     
     def remove_enemy(self, enemy: "Enemy"):
         if enemy in self._enemies:
+            logger.log(f"Removing enemy: {enemy}", "DEBUG")
+            Event.notify("remove_combatant", enemy)
             self._enemies.remove(enemy)
             del enemy
+            

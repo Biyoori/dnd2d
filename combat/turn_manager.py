@@ -46,6 +46,13 @@ class TurnManager:
 
     def next_turn(self) -> None:
         if self.in_combat:
+            
+            alive_enemies = [enemy for enemy in self.combat.get_enemies() if enemy.health.is_alive()]
+            if not alive_enemies:
+                logger.log("All enemies defeated! Ending combat.", "INFO")
+                self.end_combat()
+                return
+            
             self.combat.next_turn()
 
     def end_turn(self) -> None:
