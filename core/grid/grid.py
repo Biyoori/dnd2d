@@ -28,11 +28,11 @@ class Grid:
         if 0 <= x < self._grid_width and 0 <= y < self._grid_height:
             self._matrix[y][x] = value
 
-    def get_cell_from_pos(self, screen_pos: Tuple[int, int]):
+    def get_cell_from_pos(self, screen_pos: Tuple[int, int]) -> Tuple[int, int]:
         x, y = screen_pos
         grid_x = x // self.cell_size
         grid_y = y // self.cell_size
-        return grid_x, grid_y
+        return (grid_x, grid_y)
     
     def get_cell(self, pos: Tuple[int, int]) -> int:
         x, y = pos

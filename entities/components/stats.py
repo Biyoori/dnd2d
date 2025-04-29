@@ -57,8 +57,10 @@ class StatsSystem:
         return bonus
     
     def determine_attack_attribute(self, weapon: "Weapon") -> int:
-        if weapon.weapon_type == "melee" and not weapon.finesse:
+        if "Range" not in weapon.properties and not weapon.finesse:
             return self._abilities.get_mod("STR")
+        elif "Range" in weapon.properties:
+            return self._abilities.get_mod("DEX")
         return self._abilities.get_mod("DEX") if self._abilities.get_mod("DEX") > self._abilities.get_mod("STR") else self._abilities.get_mod("STR")
 
     def roll_skill_check(self, skill: str) -> tuple[int, int]:

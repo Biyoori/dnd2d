@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, ClassVar, Dict, List
 from core.event import Event
+from ui.game_console import console
 
 if TYPE_CHECKING:
     from characters.classes.characterClass import CharacterClass
@@ -18,11 +19,14 @@ class LevelingSystem:
         self.selected_class = None
         
         Event.subscribe("class_selected", self._set_selected_class)
+        Event.subscribe("enemy_killed", self.add_exp)
 
-    def add_exp(self, amount) -> None:
+    def add_exp(self, amount: int) -> None:
         self._levels.experience += amount
         if sum(self._levels.character_classes.values()) < len(self._levels.XP_TRESHOLDS) and self._levels.experience >= self._levels.XP_TRESHOLDS[sum(self._levels.character_classes.values())]:
             Event.notify("show_class_selection_ui")
+        
+        console.log(f"Experience added: {amount}. Total experience: {self._levels.experience}.")
 
     def level_up(self, character_class: "CharacterClass") -> None:
         if character_class in self._levels.character_classes:

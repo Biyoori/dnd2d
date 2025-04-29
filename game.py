@@ -1,8 +1,5 @@
-from doctest import debug
-from math import pi
 from core.camera import Camera
 from debugging import logger, DebugOverlay, DebugConsole
-from entities import entity
 from entities.components.factions import FactionSystem
 from settings import *
 from core.grid.grid import Grid
@@ -88,7 +85,7 @@ def handle_events() -> None:
     for event in pygame.event.get():
         if entity_manager.get_character().health.is_alive():
             if hasattr(event, 'pos'):
-                mouse_pos, _ = camera.apply_offset(event.pos, grid.cell_size)
+                mouse_pos = camera.apply_offset(event.pos)
                 entity_manager.get_character().update(event, turn_manager, mouse_pos)
             menu.process_events(event)
         level_up_ui.handle_event(event)
@@ -101,10 +98,17 @@ def handle_events() -> None:
             if event.button == 3 and not entity_manager.get_character().input_handler.dragging:
                 menu.open_at(event.pos)
             elif event.button == 1:
+                grid_pos = camera.apply_offset(event.pos)
                 menu.close()
                 if entity_manager.get_character().targeting.target_selection:
-                    grid_pos, pixel_pos = camera.apply_offset(event.pos, grid.cell_size)
                     entity_manager.get_character().targeting.handle_target_selection(grid_pos, grid, entity_manager.get_character().attacking, entity_manager.get_character(), turn_manager)
+                    break
+                for lootable in entity_manager.get_loot():
+                    if lootable.is_clicked(grid_pos):
+                        if not lootable.is_looted():
+                            loot = lootable.loot()
+                            if loot:
+                                entity_manager.get_character().inventory.pick_up(loot)
         if event.type == pygame.MOUSEWHEEL:
             grid.cell_size += event.y
             entity_manager.get_character().update_size(grid)
@@ -112,6 +116,9 @@ def handle_events() -> None:
             for enemy in entity_manager.get_enemies():
                 enemy.update_size(grid)
                 enemy.movement.set_position(*enemy.grid_position)
+            for lootable in entity_manager.get_loot():
+                lootable.update_position(grid.cell_size)
+                lootable.update_size(grid.cell_size)
         if event.type == pygame.KEYUP and event.key == pygame.K_RETURN and turn_manager.is_in_combat():
             turn_manager.end_turn()
         if event.type == pygame.KEYUP and event.key == pygame.K_F1:
@@ -140,6 +147,9 @@ def draw() -> None:
         entity_manager.get_character().draw(gameScreen, camera.offset)
     for enemy in entity_manager.get_enemies():
         enemy.draw(gameScreen, camera.offset)
+    for lootable in entity_manager.get_loot():
+        lootable.render(gameScreen, camera.offset)
+    
 
     entity_manager.get_character().pathfinder.draw_path(gameScreen, grid.cell_size, camera.offset)
 

@@ -1,7 +1,9 @@
 from dataclasses import dataclass, field
-from typing import List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING, Dict
 from debugging import logger
 from ui.game_console import console
+from entities.lootable import Lootable
+from factories.item_factory import ItemFactory
 
 if TYPE_CHECKING:
     from items.item import Item
@@ -41,3 +43,11 @@ class InventorySystem:
     
     def get_inventory(self) -> List["Item"]:
         return self._data.items.copy()
+    
+    def pick_up(self, loot: Dict[str, int]) -> None:
+        for item_name, quantity in loot.items():
+            if isinstance(item_name, str):
+                item = ItemFactory.create(item_name)
+            for _ in range(quantity):
+                self.add_item(item)
+        logger.log(f"Picked up {loot}.", "INFO")

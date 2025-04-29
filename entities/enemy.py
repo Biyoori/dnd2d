@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 from core.event import Event
 from entities.components.factions import Faction
 from entities.components.health import HealthData, HealthSystem
+from entities.components.loot import LootData, LootSystem
 from entities.components.stats import AbilityScores, Proficiencies, StatsSystem
 from health_calculator import HealthCalculator
 from settings import get_color
@@ -52,6 +53,10 @@ class Enemy(Entity):
         #AI
         self.ai = SkeletonAi(self, self.grid)
 
+        #Loot
+        loot_data = LootData({item: 1 for item in kwargs.get("gear", [])})
+        self.loot = LootSystem(loot_data)
+
     def execute_action(self, action_name: str, target: "Entity") -> None:
         action_data = next((action for action in self.actions if action["name"] == action_name), None)
         if not action_data:
@@ -71,6 +76,11 @@ class Enemy(Entity):
             raise ValueError(f"Error executing action '{action_name}': {str(e)}")
         
     def on_death(self) -> None:
+        position = (self.position[0] - self.grid.cell_size // 2, self.position[1] - self.grid.cell_size // 2)
+        self.loot.drop_loot(self.position, self.grid_position, self.size)
+        Event.notify("enemy_killed", self.experience)
+        
+        #Remove the enemy from the game
         self.input_handler.entity = None
         self.movement.entity = None
         self.pathfinder.entity = None

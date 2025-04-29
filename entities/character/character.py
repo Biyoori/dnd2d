@@ -95,12 +95,6 @@ class Character(Entity):
     def load_feats(self) -> list:
         return [get_feat(feat) for feat in self.race.features]
 
-    def pick_up(self, item: "Item") -> None:
-        self.inventory.add_item(item)
-
-    def drop(self, item_name: str) -> None:
-        self.inventory.remove_item(item_name)
-
     def display_character_info(self) -> None:
         print(f"{self.name}, {self.race.name}")
         print("Classes:", {cls.name: lvl for cls, lvl in self.levels.get_classes().items()})

@@ -4,7 +4,7 @@
     "alignment": "Neutral-Evil",
     "armor_class": 13,
     "hit_points": {
-        "fixed": 13,
+        "fixed": 1,
         "formula": "2d8+4"
     },
     "speed": 30,
@@ -33,7 +33,7 @@
     ],
     "challenge_rating": 0.25,
     "experience": 50,
-    "gear": ["shortsword", "shortbow"],
+    "gear": ["Shortsword", "Shortbow"],
     "actions": [
         {
             "name": "Shortsword",
